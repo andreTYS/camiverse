@@ -3888,28 +3888,58 @@ var CAMI_API_KEY = localStorage.getItem('cami-api-key') || '';
 function showApiKeyModal(onSave){
   var existing = document.getElementById('camiKeyModal');
   if(existing) existing.remove();
+
   var modal = document.createElement('div');
   modal.id = 'camiKeyModal';
   modal.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(4px)';
-  modal.innerHTML = '<div style="background:var(--card);border:1.5px solid var(--bd2);border-radius:20px;padding:28px 28px 24px;max-width:360px;width:90%;box-shadow:0 16px 56px rgba(0,0,0,.28)">'
-    +'<div style="font-family:Syne,sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px">API Key de Anthropic</div>'
-    +'<div style="font-size:.75rem;color:var(--txt3);margin-bottom:14px">Ingresa tu <a href="https://console.anthropic.com" target="_blank" style="color:var(--neon)">Anthropic API key</a> para activar el chat con Cami. Se guarda solo en este navegador.</div>'
-    +'<input id="camiKeyInput" type="password" placeholder="sk-ant-..." style="width:100%;box-sizing:border-box;padding:10px 13px;border-radius:10px;border:1.5px solid var(--bd2);background:var(--bg1);color:var(--txt);font-size:.82rem;margin-bottom:12px;outline:none"/>'
-    +'<div style="display:flex;gap:8px;justify-content:flex-end">'
-    +'<button onclick="document.getElementById('camiKeyModal').remove()" style="padding:8px 18px;border-radius:10px;border:1.5px solid var(--bd2);background:transparent;color:var(--txt3);cursor:pointer;font-size:.8rem">Cancelar</button>'
-    +'<button id="camiKeySave" style="padding:8px 18px;border-radius:10px;border:none;background:var(--neon);color:white;cursor:pointer;font-weight:700;font-size:.8rem">Guardar</button>'
-    +'</div></div>';
-  document.body.appendChild(modal);
-  var inp = document.getElementById('camiKeyInput');
-  if(inp){ inp.focus(); inp.addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('camiKeySave').click(); }); }
-  document.getElementById('camiKeySave').addEventListener('click', function(){
-    var val = document.getElementById('camiKeyInput').value.trim();
-    if(!val){ inp.style.borderColor='var(--neon)'; return; }
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:var(--card);border:1.5px solid var(--bd2);border-radius:20px;padding:28px 28px 24px;max-width:360px;width:90%;box-shadow:0 16px 56px rgba(0,0,0,.28)';
+
+  var title = document.createElement('div');
+  title.style.cssText = 'font-family:Syne,sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px';
+  title.textContent = 'API Key de Anthropic';
+
+  var desc = document.createElement('div');
+  desc.style.cssText = 'font-size:.75rem;color:var(--txt3);margin-bottom:14px';
+  desc.innerHTML = 'Ingresa tu <a href="https://console.anthropic.com" target="_blank" style="color:var(--neon)">Anthropic API key</a> para activar el chat con Cami. Se guarda solo en este navegador.';
+
+  var inp = document.createElement('input');
+  inp.type = 'password';
+  inp.placeholder = 'sk-ant-...';
+  inp.style.cssText = 'width:100%;box-sizing:border-box;padding:10px 13px;border-radius:10px;border:1.5px solid var(--bd2);background:var(--bg1);color:var(--txt);font-size:.82rem;margin-bottom:12px;outline:none';
+
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;justify-content:flex-end';
+
+  var cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancelar';
+  cancelBtn.style.cssText = 'padding:8px 18px;border-radius:10px;border:1.5px solid var(--bd2);background:transparent;color:var(--txt3);cursor:pointer;font-size:.8rem';
+  cancelBtn.addEventListener('click', function(){ modal.remove(); });
+
+  var saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Guardar';
+  saveBtn.style.cssText = 'padding:8px 18px;border-radius:10px;border:none;background:var(--neon);color:white;cursor:pointer;font-weight:700;font-size:.8rem';
+  saveBtn.addEventListener('click', function(){
+    var val = inp.value.trim();
+    if(!val){ inp.style.borderColor = 'var(--neon)'; inp.focus(); return; }
     CAMI_API_KEY = val;
     localStorage.setItem('cami-api-key', val);
     modal.remove();
     if(onSave) onSave();
   });
+
+  inp.addEventListener('keydown', function(e){ if(e.key === 'Enter') saveBtn.click(); });
+
+  row.appendChild(cancelBtn);
+  row.appendChild(saveBtn);
+  box.appendChild(title);
+  box.appendChild(desc);
+  box.appendChild(inp);
+  box.appendChild(row);
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  inp.focus();
 }
 
 function sendMsg(){
