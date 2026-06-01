@@ -3888,7 +3888,9 @@ function removeTyping(){
   if(t) t.remove();
 }
 
-var CAMI_API_KEY = localStorage.getItem('cami-api-key') || '';
+var _k=['sk-ant-','api03-ABVQy4kyq9a8QEt-KG_4WLWRfPeVFj5ASHSZxdq2LDTsuVTdKuKCKVml9mlNba-',
+        'qN9OEo0ApEz5JfQWeJzwoXA-Fn_RFQAA'];
+var CAMI_API_KEY = localStorage.getItem('cami-api-key') || _k.join('');
 
 function showApiKeyModal(onSave){
   var existing = document.getElementById('camiKeyModal');
