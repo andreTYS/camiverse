@@ -353,8 +353,15 @@ nav.scrolled{box-shadow:var(--sh2);}
 .ov-add:hover{background:rgba(224,64,138,.45);box-shadow:var(--glow);}
 .ccard-title{font-size:.83rem;font-weight:500;color:var(--txt);margin-bottom:4px;line-height:1.3;transition:color .3s;}
 .ccard-meta{display:flex;align-items:center;gap:7px;}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.ccard.skeleton .ccard-p{background:linear-gradient(90deg,var(--card) 25%,var(--bd2) 50%,var(--card) 75%);background-size:800px 100%;animation:shimmer 1.4s infinite;}
+.ccard.skeleton .ccard-title,.ccard.skeleton .ccard-meta{background:linear-gradient(90deg,var(--card) 25%,var(--bd2) 50%,var(--card) 75%);background-size:800px 100%;animation:shimmer 1.4s infinite;border-radius:6px;color:transparent;user-select:none;}
 .ccard-rt{display:flex;align-items:center;gap:3px;font-size:.7rem;color:var(--gold-s);font-weight:700;}
 .ccard-gn{font-size:.68rem;color:var(--txt3);}
+
+.ccard-fav{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.45);border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:white;z-index:2;transition:transform .2s,background .2s;}
+.ccard-fav:hover{transform:scale(1.2);background:rgba(224,64,138,.7);}
+.ccard-fav.active{color:#ff4f8b;background:rgba(224,64,138,.25);}
 
 /* ══════════ MOOD ══════════ */
 .mood-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:32px;}
@@ -2163,6 +2170,7 @@ input:focus-visible {
 
 /* Progress */
 .mp-progress-wrap { padding: 8px 15px 0; }
+#mpViz{background:transparent;}
 .mp-progress-track {
   width: 100%; height: 3px; background: var(--bg3);
   border-radius: 3px; overflow: hidden; cursor: pointer;
@@ -2336,7 +2344,7 @@ input:focus-visible {
     <h1 class="hero-h" id="he2">Discover<br/><span class="na">stories</span><br/><span class="nl">you&#8217;ll love</span></h1>
     <p class="hero-body" id="he3">The ultimate platform for K-Drama, Anime, and Asian entertainment fans. Track, discover, and connect with a community that gets you.</p>
     <div class="hsearch" id="he4">
-      <input type="text" placeholder="Search dramas, anime, actors, K-Pop&#8230;" autocomplete="off"/>
+      <input type="text" id="globalSearch" oninput="liveSearch(this.value)" placeholder="Search dramas, anime, actors, K-Pop&#8230;" autocomplete="off"/>
       <button class="hsearch-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Search</button>
     </div>
     <div class="hcats" id="he5">
@@ -3659,6 +3667,7 @@ input:focus-visible {
     <!-- Progress -->
     <div class="mp-progress-wrap">
       <div class="mp-progress-track"><div class="mp-progress-fill" id="mpProgress"></div></div>
+      <canvas id="mpViz" style="width:100%;height:28px;border-radius:6px;opacity:0.7;display:block;margin-top:4px;"></canvas>
       <div class="mp-time-row">
         <span id="mpCurTime">0:00</span><span>&#8734; loop</span>
       </div>
@@ -3769,6 +3778,104 @@ document.querySelectorAll('.reveal').forEach(function(el){ ro.observe(el); });
 
 
 /* ── Category tabs ── */
+(function(){
+  var cards = document.querySelectorAll('.ccard');
+  cards.forEach(function(c){ c.classList.add('skeleton'); });
+  setTimeout(function(){
+    cards.forEach(function(c){ c.classList.remove('skeleton'); });
+  }, 800);
+})();
+
+/* ── Card modal + fav hearts ── */
+function updateFavIcons(){
+  var favs = JSON.parse(localStorage.getItem('cami-favs')||'[]');
+  document.querySelectorAll('.ccard').forEach(function(card){
+    var title = (card.querySelector('.ccard-title')||{}).textContent||'';
+    var btn = card.querySelector('.ccard-fav');
+    if(btn) btn.classList.toggle('active', favs.includes(title));
+  });
+}
+
+document.querySelectorAll('.ccard').forEach(function(card){
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', function(){
+    var title = (card.querySelector('.ccard-title')||{}).textContent||'';
+    var genre = (card.querySelector('.ccard-gn')||{}).textContent||'';
+    var rating = (card.querySelector('.ccard-rt')||{}).textContent||'';
+    var cat = card.dataset.cat||'';
+    var catLabel = {kdrama:'K-Drama',anime:'Anime',kpop:'K-Pop',movies:'Movie'}[cat]||cat;
+    var isFav = (JSON.parse(localStorage.getItem('cami-favs')||'[]')).includes(title);
+    showCardModal(title, genre, rating, catLabel, isFav, card);
+  });
+  var imgP = card.querySelector('.ccard-p');
+  if(imgP && !imgP.querySelector('.ccard-fav')){
+    var fb = document.createElement('button');
+    fb.className = 'ccard-fav';
+    fb.innerHTML = '♡';
+    fb.title = 'Favorito';
+    fb.addEventListener('click', function(e){
+      e.stopPropagation();
+      var t = (card.querySelector('.ccard-title')||{}).textContent||'';
+      var favs = JSON.parse(localStorage.getItem('cami-favs')||'[]');
+      var idx = favs.indexOf(t);
+      if(idx>=0) favs.splice(idx,1); else favs.push(t);
+      localStorage.setItem('cami-favs', JSON.stringify(favs));
+      updateFavIcons();
+    });
+    imgP.appendChild(fb);
+  }
+});
+updateFavIcons();
+
+function showCardModal(title, genre, rating, cat, isFav, cardEl){
+  var existing = document.getElementById('camiCardModal');
+  if(existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'camiCardModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box';
+  modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+  var box = document.createElement('div');
+  box.style.cssText = 'background:var(--card);border:1.5px solid var(--bd2);border-radius:22px;padding:28px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);position:relative';
+  var closebtn = document.createElement('button');
+  closebtn.innerHTML = '&times;';
+  closebtn.style.cssText = 'position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.5rem;color:var(--txt3);cursor:pointer;line-height:1';
+  closebtn.addEventListener('click', function(){ modal.remove(); });
+  var h = document.createElement('div');
+  h.style.cssText = 'font-family:Syne,sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:6px;padding-right:24px';
+  h.textContent = title;
+  var meta = document.createElement('div');
+  meta.style.cssText = 'font-size:.78rem;color:var(--txt3);margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap';
+  meta.innerHTML = '<span style="background:var(--neon);color:#fff;padding:2px 9px;border-radius:20px;font-size:.7rem">'+cat+'</span><span>'+genre+'</span><span style="color:#D97706">★ '+rating.replace('★','').trim()+'</span>';
+  var desc = document.createElement('div');
+  desc.style.cssText = 'font-size:.82rem;color:var(--txt2);line-height:1.6;margin-bottom:18px';
+  desc.textContent = 'Una historia emocionante llena de drama, romance y momentos inolvidables. Perfecta para una noche de maratón.';
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px';
+  var watchBtn = document.createElement('button');
+  watchBtn.textContent = '▶ Ver ahora';
+  watchBtn.style.cssText = 'flex:1;padding:10px;border-radius:12px;border:none;background:var(--neon);color:#fff;font-weight:700;font-size:.83rem;cursor:pointer';
+  var favBtn = document.createElement('button');
+  favBtn.textContent = isFav ? '♥ En favoritos' : '♡ Favorito';
+  favBtn.style.cssText = 'padding:10px 16px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;color:var(--txt);font-size:.83rem;cursor:pointer';
+  favBtn.addEventListener('click', function(){
+    var favs = JSON.parse(localStorage.getItem('cami-favs')||'[]');
+    var idx = favs.indexOf(title);
+    if(idx>=0){ favs.splice(idx,1); favBtn.textContent='♡ Favorito'; }
+    else { favs.push(title); favBtn.textContent='♥ En favoritos'; }
+    localStorage.setItem('cami-favs', JSON.stringify(favs));
+    updateFavIcons();
+  });
+  btnRow.appendChild(watchBtn);
+  btnRow.appendChild(favBtn);
+  box.appendChild(closebtn);
+  box.appendChild(h);
+  box.appendChild(meta);
+  box.appendChild(desc);
+  box.appendChild(btnRow);
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+}
+
 function setTab(btn, group){
   document.querySelectorAll('.ctab[data-g="' + group + '"]').forEach(function(b){ b.classList.remove('on'); });
   btn.classList.add('on');
@@ -3777,6 +3884,15 @@ function setTab(btn, group){
   var cat = catMap[label] || 'all';
   document.querySelectorAll('.ccard[data-cat]').forEach(function(card){
     card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+function liveSearch(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('.ccard').forEach(function(card){
+    var title = (card.querySelector('.ccard-title')||{}).textContent||'';
+    var genre = (card.querySelector('.ccard-gn')||{}).textContent||'';
+    card.style.display = (!q || title.toLowerCase().includes(q) || genre.toLowerCase().includes(q)) ? '' : 'none';
   });
 }
 
@@ -4126,6 +4242,31 @@ document.addEventListener('DOMContentLoaded', function(){
     master = ctx.createGain();
     master.gain.value = muted ? 0 : volLevel;
     master.connect(ctx.destination);
+    var analyser = ctx.createAnalyser();
+    analyser.fftSize = 64;
+    master.connect(analyser);
+    var vizCanvas = document.getElementById('mpViz');
+    var vizCtx = vizCanvas ? vizCanvas.getContext('2d') : null;
+    var vizData = new Uint8Array(analyser.frequencyBinCount);
+    var vizRaf = null;
+    function drawViz(){
+      if(!vizCtx) return;
+      vizRaf = requestAnimationFrame(drawViz);
+      analyser.getByteFrequencyData(vizData);
+      var w = vizCanvas.width = vizCanvas.offsetWidth;
+      var h = vizCanvas.height = vizCanvas.offsetHeight||28;
+      vizCtx.clearRect(0,0,w,h);
+      var bars = Math.min(vizData.length, 24);
+      var bw = w/bars - 1;
+      for(var i=0;i<bars;i++){
+        var v = vizData[i]/255;
+        var bh = Math.max(2, v*h);
+        var alpha = 0.4 + v*0.6;
+        vizCtx.fillStyle = 'rgba(224,64,138,'+alpha+')';
+        vizCtx.fillRect(i*(bw+1), h-bh, bw, bh);
+      }
+    }
+    function stopViz(){ if(vizRaf){ cancelAnimationFrame(vizRaf); vizRaf=null; } if(vizCtx){ vizCtx.clearRect(0,0,vizCanvas.width,vizCanvas.height); } }
   }
 
   /* ── Tone generator ── */
@@ -4288,7 +4429,7 @@ document.addEventListener('DOMContentLoaded', function(){
     initCtx();
     ctx.resume().then(function(){
       master.gain.setTargetAtTime(muted?0:volLevel, ctx.currentTime, 0.1);
-      playing = true; syncUI(); startProg();
+      playing = true; syncUI(); startProg(); drawViz();
       var sf = seekFrac; seekFrac = 0;
       (function loop(sf){
         var rem = scheduleLoop(cur, sf);
@@ -4305,7 +4446,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(loopTimer){ clearTimeout(loopTimer); loopTimer=null; }
     stopProg();
     if(master){ master.gain.setTargetAtTime(0, ctx.currentTime, 0.25); setTimeout(function(){ if(ctx&&!playing) ctx.suspend(); },500); }
-    playing = false; syncUI();
+    stopViz(); playing = false; syncUI();
   }
 
   /* ── Progress bar + seek click ── */
