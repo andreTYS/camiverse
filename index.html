@@ -2171,6 +2171,8 @@ input:focus-visible {
 /* Progress */
 .mp-progress-wrap { padding: 8px 15px 0; }
 #mpViz{background:transparent;}
+@keyframes moodPulse{0%,100%{opacity:.7}50%{opacity:1}}
+.mp-mood{animation:moodPulse 2.5s ease-in-out infinite;}
 .mp-progress-track {
   width: 100%; height: 3px; background: var(--bg3);
   border-radius: 3px; overflow: hidden; cursor: pointer;
@@ -3650,6 +3652,7 @@ input:focus-visible {
     <div class="mp-art"><svg width="22" height="24" viewBox="0 0 22 24" fill="none"><ellipse cx="6" cy="6" rx="3.5" ry="6" fill="#FFD6E8" stroke="rgba(224,64,138,0.38)" stroke-width="1"/><ellipse cx="6" cy="6" rx="2" ry="4.2" fill="#FFB8D4"/><ellipse cx="16" cy="6" rx="3.5" ry="6" fill="#FFD6E8" stroke="rgba(224,64,138,0.38)" stroke-width="1"/><ellipse cx="16" cy="6" rx="2" ry="4.2" fill="#FFB8D4"/><ellipse cx="11" cy="16" rx="9" ry="8.5" fill="#FFE8F3" stroke="rgba(224,64,138,0.22)" stroke-width="1"/><ellipse cx="8.2" cy="14.5" rx="1.8" ry="2.1" fill="#2D1840"/><ellipse cx="13.8" cy="14.5" rx="1.8" ry="2.1" fill="#2D1840"/><circle cx="8.8" cy="13.8" r=".9" fill="white"/><circle cx="14.4" cy="13.8" r=".9" fill="white"/><ellipse cx="11" cy="17.5" rx="1.6" ry="1.1" fill="#E0408A" opacity=".82"/></svg><div class="mp-art-ring"></div></div>
     <div class="mp-info">
       <div class="mp-track" id="mpTrackName">Dreamy Romance</div>
+      <div class="mp-mood" id="mpMoodLabel" style="font-size:.68rem;color:var(--neon);opacity:0.8;letter-spacing:.04em;margin-top:2px;transition:opacity .4s;text-transform:uppercase;font-weight:600;"></div>
       <div class="mp-artist">CamiVerse Radio &#127800;</div>
     </div>
     <button class="mp-minimize" onclick="toggleMinimize()" title="Minimize">&#8722;</button>
@@ -3732,10 +3735,12 @@ input:focus-visible {
     </div>
   </div>
   <div class="chat-bot">
-    <div class="chat-suggs">
-      <button class="sug" onclick="sendSugg(this)">Recom&#233;ndame un K-Drama</button>
-      <button class="sug" onclick="sendSugg(this)">Mejor anime 2024</button>
-      <button class="sug" onclick="sendSugg(this)">Romance para llorar</button>
+    <div class="chat-suggs" id="chatSuggs">
+      <button class="sug" onclick="sendSugg(this)">&#127911; Top K-Drama 2024</button>
+      <button class="sug" onclick="sendSugg(this)">&#128149; Anime rom&#225;ntico</button>
+      <button class="sug" onclick="sendSugg(this)">&#128293; Acci&#243;n imperdible</button>
+      <button class="sug" onclick="sendSugg(this)">&#127801; K-Pop nuevo</button>
+      <button class="sug" onclick="sendSugg(this)">&#128557; Pel&#237;cula para llorar</button>
     </div>
     <div class="chat-row">
       <input class="chat-in" id="chatIn" placeholder="Escr&#237;bele a Cami&#8230;" onkeydown="handleKey(event)" autocomplete="off"/>
@@ -3937,8 +3942,29 @@ document.querySelectorAll('.sbar-num[data-val]').forEach(function(el){ counterOb
 
 /* ── Chatbot ── */
 var chatOpen = false;
-var chatHistory = [];
+var chatHistory = (function(){
+  try{ return JSON.parse(sessionStorage.getItem('cami-history')||'[]'); }catch(e){ return []; }
+})();
 var isTyping = false;
+(function(){
+  if(chatHistory.length > 0){
+    var msgs = document.getElementById('chatMsgs');
+    if(!msgs) return;
+    var summary = document.createElement('div');
+    summary.style.cssText = 'text-align:center;margin:6px 0';
+    var btn = document.createElement('button');
+    btn.style.cssText = 'font-size:.72rem;color:var(--txt3);background:none;border:1px solid var(--bd2);border-radius:20px;padding:4px 12px;cursor:pointer';
+    btn.textContent = '↑ Ver historial anterior ('+Math.floor(chatHistory.length/2)+' mensajes)';
+    btn.addEventListener('click', function(){
+      summary.remove();
+      chatHistory.forEach(function(m){
+        appendMsg(m.role==='user'?'user':'bot', typeof m.content==='string'?m.content:'');
+      });
+    });
+    summary.appendChild(btn);
+    msgs.insertBefore(summary, msgs.firstChild);
+  }
+})();
 
 var BUNNY_AVG = '<svg width="16" height="18" viewBox="0 0 16 18" fill="none"><ellipse cx="4" cy="4" rx="2.5" ry="4" fill="#FFD6E8" stroke="rgba(224,64,138,0.35)" stroke-width=".8"/><ellipse cx="12" cy="4" rx="2.5" ry="4" fill="#FFD6E8" stroke="rgba(224,64,138,0.35)" stroke-width=".8"/><ellipse cx="8" cy="11.5" rx="6.5" ry="6" fill="#FFE8F3" stroke="rgba(224,64,138,0.20)" stroke-width=".8"/><ellipse cx="5.8" cy="10.2" rx="1.3" ry="1.5" fill="#2D1840"/><ellipse cx="10.2" cy="10.2" rx="1.3" ry="1.5" fill="#2D1840"/><circle cx="6.2" cy="9.6" r=".7" fill="white"/><circle cx="10.6" cy="9.6" r=".7" fill="white"/><ellipse cx="8" cy="12.8" rx="1.2" ry=".85" fill="#E0408A" opacity=".80"/></svg>';
 
@@ -3958,6 +3984,8 @@ function toggleChat(){
 function sendSugg(btn){
   var inp = document.getElementById('chatIn');
   if(inp){ inp.value = btn.textContent.trim(); sendMsg(); }
+  var suggs = document.getElementById('chatSuggs');
+  if(suggs){ suggs.style.transition='opacity .3s'; suggs.style.opacity='0'; setTimeout(function(){ suggs.style.display='none'; },300); }
 }
 
 function handleKey(e){
@@ -3976,8 +4004,35 @@ function appendMsg(role, text){
     av.className = 'msg-asm';
     av.innerHTML = BUNNY_AVG;
     div.appendChild(av);
+    // detect card matches
+    var allCards = document.querySelectorAll('.ccard');
+    var chips = [];
+    allCards.forEach(function(card){
+      var t = (card.querySelector('.ccard-title')||{}).textContent||'';
+      if(t && text.toLowerCase().includes(t.toLowerCase())){
+        chips.push({title:t, card:card});
+      }
+    });
+    div.appendChild(bub);
+    if(chips.length){
+      var chipRow = document.createElement('div');
+      chipRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;margin-left:28px';
+      chips.forEach(function(c){
+        var chip = document.createElement('button');
+        chip.style.cssText = 'padding:4px 10px;border-radius:20px;border:1px solid var(--neon);background:transparent;color:var(--neon);font-size:.7rem;cursor:pointer';
+        chip.textContent = '▶ '+c.title;
+        chip.addEventListener('click', function(){
+          c.card.scrollIntoView({behavior:'smooth',block:'center'});
+          c.card.style.boxShadow='0 0 0 2px var(--neon)';
+          setTimeout(function(){ c.card.style.boxShadow=''; },1800);
+        });
+        chipRow.appendChild(chip);
+      });
+      div.appendChild(chipRow);
+    }
+  } else {
+    div.appendChild(bub);
   }
-  div.appendChild(bub);
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
@@ -4074,6 +4129,7 @@ function sendMsg(){
   inp.value = '';
   appendMsg('user', text);
   chatHistory.push({role: 'user', content: text});
+  try{ sessionStorage.setItem('cami-history', JSON.stringify(chatHistory)); }catch(e){}
   if(chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
   isTyping = true;
   var sendBtn = document.getElementById('chatSend');
@@ -4105,6 +4161,7 @@ function sendMsg(){
     removeTyping();
     var reply = (data.content && data.content[0]) ? data.content[0].text : 'Lo siento, hubo un problema. \u00A1Intenta de nuevo!';
     chatHistory.push({role: 'assistant', content: reply});
+    try{ sessionStorage.setItem('cami-history', JSON.stringify(chatHistory)); }catch(e){}
     appendMsg('bot', reply);
   })
   .catch(function(err){
@@ -4403,7 +4460,7 @@ document.addEventListener('DOMContentLoaded', function(){
   function seekTo(frac){
     frac = Math.max(0, Math.min(0.98, frac));
     var was = playing;
-    if(playing){ clearTimeout(loopTimer); loopTimer=null; stopProg(); master.gain.setTargetAtTime(0,ctx.currentTime,0.05); }
+    if(playing){ clearTimeout(loopTimer); loopTimer=null; stopProg(); master.gain.setTargetAtTime(0,ctx.currentTime,0.15); }
     seekFrac = frac;
     if(was){
       setTimeout(function(){
@@ -4428,7 +4485,8 @@ document.addEventListener('DOMContentLoaded', function(){
   function startPlay(){
     initCtx();
     ctx.resume().then(function(){
-      master.gain.setTargetAtTime(muted?0:volLevel, ctx.currentTime, 0.1);
+      master.gain.setValueAtTime(0, ctx.currentTime);
+      master.gain.linearRampToValueAtTime(muted ? 0 : volLevel, ctx.currentTime + 0.35);
       playing = true; syncUI(); startProg(); drawViz();
       var sf = seekFrac; seekFrac = 0;
       (function loop(sf){
@@ -4483,6 +4541,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
   function updateTrackUI(){
     if(trkName) trkName.textContent = TRACKS[cur].name;
+    var moodEl = document.getElementById('mpMoodLabel');
+    if(moodEl) moodEl.textContent = TRACKS[cur].mood;
     document.querySelectorAll('.mp-tl-item').forEach(function(el, i){
       el.classList.toggle('active', i===cur);
       var num = document.getElementById('mpTlNum'+i);
