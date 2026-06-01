@@ -3594,41 +3594,46 @@ input:focus-visible {
 
   <!-- Tracklist popup -->
   <div class="mp-tracklist" id="mpTracklist">
-    <div class="mp-tl-hdr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> CamiVerse Radio &#8212; K-Drama Vibes</div>
+    <div class="mp-tl-hdr"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> CamiVerse Radio &mdash; 10 Tracks</div>
     <div class="mp-tl-item active" onclick="playTrack(0)">
       <span class="mp-tl-num" id="mpTlNum0"><div class="mp-tl-playing"><div class="mp-tl-bar"></div><div class="mp-tl-bar"></div><div class="mp-tl-bar"></div></div></span>
-      <div class="mp-tl-info">
-        <div class="mp-tl-title">Dreamy Romance</div>
-        <div class="mp-tl-meta">Ambient Piano &bull; BPM 88</div>
-      </div>
+      <div class="mp-tl-info"><div class="mp-tl-title">Dreamy Romance</div><div class="mp-tl-meta">Ambient Piano &bull; 88 BPM</div></div>
     </div>
     <div class="mp-tl-item" onclick="playTrack(1)">
       <span class="mp-tl-num" id="mpTlNum1">2</span>
-      <div class="mp-tl-info">
-        <div class="mp-tl-title">Moonlit Memories</div>
-        <div class="mp-tl-meta">Slow &amp; Emotional &bull; BPM 76</div>
-      </div>
+      <div class="mp-tl-info"><div class="mp-tl-title">Moonlit Memories</div><div class="mp-tl-meta">Slow &amp; Emotional &bull; 76 BPM</div></div>
     </div>
     <div class="mp-tl-item" onclick="playTrack(2)">
       <span class="mp-tl-num" id="mpTlNum2">3</span>
-      <div class="mp-tl-info">
-        <div class="mp-tl-title">Cherry Blossom</div>
-        <div class="mp-tl-meta">Light &amp; Bright &bull; BPM 92</div>
-      </div>
+      <div class="mp-tl-info"><div class="mp-tl-title">Cherry Blossom</div><div class="mp-tl-meta">Light &amp; Bright &bull; 92 BPM</div></div>
     </div>
     <div class="mp-tl-item" onclick="playTrack(3)">
       <span class="mp-tl-num" id="mpTlNum3">4</span>
-      <div class="mp-tl-info">
-        <div class="mp-tl-title">Tender Moment</div>
-        <div class="mp-tl-meta">Soft &amp; Warm &bull; BPM 70</div>
-      </div>
+      <div class="mp-tl-info"><div class="mp-tl-title">Tender Moment</div><div class="mp-tl-meta">Soft &amp; Warm &bull; 70 BPM</div></div>
     </div>
     <div class="mp-tl-item" onclick="playTrack(4)">
       <span class="mp-tl-num" id="mpTlNum4">5</span>
-      <div class="mp-tl-info">
-        <div class="mp-tl-title">Slow Burn</div>
-        <div class="mp-tl-meta">Deep Cinematic &bull; BPM 65</div>
-      </div>
+      <div class="mp-tl-info"><div class="mp-tl-title">Slow Burn</div><div class="mp-tl-meta">Deep Cinematic &bull; 65 BPM</div></div>
+    </div>
+    <div class="mp-tl-item" onclick="playTrack(5)">
+      <span class="mp-tl-num" id="mpTlNum5">6</span>
+      <div class="mp-tl-info"><div class="mp-tl-title">City Pop Night</div><div class="mp-tl-meta">Groovy &amp; Funky &bull; 104 BPM</div></div>
+    </div>
+    <div class="mp-tl-item" onclick="playTrack(6)">
+      <span class="mp-tl-num" id="mpTlNum6">7</span>
+      <div class="mp-tl-info"><div class="mp-tl-title">K-Pop Rush</div><div class="mp-tl-meta">Energetic &amp; Upbeat &bull; 128 BPM</div></div>
+    </div>
+    <div class="mp-tl-item" onclick="playTrack(7)">
+      <span class="mp-tl-num" id="mpTlNum7">8</span>
+      <div class="mp-tl-info"><div class="mp-tl-title">Epic OST</div><div class="mp-tl-meta">Dramatic &amp; Cinematic &bull; 72 BPM</div></div>
+    </div>
+    <div class="mp-tl-item" onclick="playTrack(8)">
+      <span class="mp-tl-num" id="mpTlNum8">9</span>
+      <div class="mp-tl-info"><div class="mp-tl-title">Lo-Fi Chill</div><div class="mp-tl-meta">Relaxed &amp; Jazzy &bull; 82 BPM</div></div>
+    </div>
+    <div class="mp-tl-item" onclick="playTrack(9)">
+      <span class="mp-tl-num" id="mpTlNum9">10</span>
+      <div class="mp-tl-info"><div class="mp-tl-title">Sakura Ballad</div><div class="mp-tl-meta">Emotional &amp; Gentle &bull; 68 BPM</div></div>
     </div>
   </div>
 
@@ -4033,31 +4038,74 @@ document.addEventListener('DOMContentLoaded', function(){
   var VON   = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
   var VOFF  = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
 
-  /* Tracks */
+  /* ── 10 Tracks ── */
   var TRACKS = [
     {name:'Dreamy Romance',   mood:'Ambient Piano',    bpm:88},
     {name:'Moonlit Memories', mood:'Slow & Emotional', bpm:76},
     {name:'Cherry Blossom',   mood:'Light & Bright',   bpm:92},
     {name:'Tender Moment',    mood:'Soft & Warm',      bpm:70},
     {name:'Slow Burn',        mood:'Deep Cinematic',   bpm:65},
+    {name:'City Pop Night',   mood:'Groovy & Funky',   bpm:104},
+    {name:'K-Pop Rush',       mood:'Energetic',        bpm:128},
+    {name:'Epic OST',         mood:'Dramatic',         bpm:72},
+    {name:'Lo-Fi Chill',      mood:'Relaxed & Jazzy',  bpm:82},
+    {name:'Sakura Ballad',    mood:'Gentle & Emotional',bpm:68},
   ];
 
-  /* Chord progressions (Hz) */
+  /* Chord progressions (Hz) — 4 chords × 3 notes each */
   var CHORDS = [
-    [[220,261.6,329.6],[174.6,220,261.6],[130.8,164.8,196],[196,246.9,293.7]], // Am F C G
-    [[164.8,196,246.9],[130.8,164.8,196],[196,246.9,293.7],[146.8,185,220]],   // Em C G D
-    [[130.8,164.8,196],[196,246.9,293.7],[220,261.6,329.6],[174.6,220,261.6]], // C G Am F
-    [[146.8,174.6,220],[116.5,146.8,174.6],[174.6,220,261.6],[130.8,164.8,196]], // Dm Bb F C
-    [[220,261.6,329.6],[146.8,174.6,220],[196,246.9,293.7],[130.8,164.8,196]], // Am Dm G C
+    [[220,261.6,329.6],[174.6,220,261.6],[130.8,164.8,196],[196,246.9,293.7]],       // Am F C G
+    [[164.8,196,246.9],[130.8,164.8,196],[196,246.9,293.7],[146.8,185,220]],          // Em C G D
+    [[130.8,164.8,196],[196,246.9,293.7],[220,261.6,329.6],[174.6,220,261.6]],        // C G Am F
+    [[146.8,174.6,220],[116.5,146.8,174.6],[174.6,220,261.6],[130.8,164.8,196]],      // Dm Bb F C
+    [[220,261.6,329.6],[146.8,174.6,220],[196,246.9,293.7],[130.8,164.8,196]],        // Am Dm G C
+    [[174.6,220,261.6,329.6],[146.8,174.6,220,261.6],[196,233.1,293.7,349.2],[130.8,164.8,196,233.1]], // Fmaj7 Dm7 Gm7 C7
+    [[130.8,164.8,196],[110,130.8,164.8],[87.3,110,130.8],[98,123.5,146.8]],          // C Am F G
+    [[130.8,155.6,196],[103.8,130.8,155.6],[155.6,196,233.1],[116.5,146.8,174.6]],   // Cm Ab Eb Bb
+    [[174.6,220,261.6,329.6],[220,261.6,329.6,392],[146.8,174.6,220,261.6],[164.8,196,246.9,293.7]], // Fmaj7 Am7 Dm7 Em7b5
+    [[146.8,185,220],[123.5,146.8,185],[98,123.5,146.8],[110,138.6,164.8]],           // D Bm G A
   ];
 
-  /* Melody patterns */
+  /* Melody patterns (Hz, 0 = rest) — 16 eighth notes */
   var MELS = [
     [440,523,587,659,587,523,440,392,349,392,440,494,523,440,392,349],
     [329,392,440,494,440,392,329,294,261,294,329,370,392,329,294,261],
     [523,587,659,784,659,587,523,494,440,494,523,587,659,523,494,440],
     [293,349,392,440,392,349,293,261,233,261,293,329,349,293,261,233],
     [220,261,293,329,293,261,220,196,174,196,220,246,261,220,196,174],
+    [523,587,659,784,659,784,659,587,523,440,494,523,440,392,440,392],  // city pop bright
+    [880,880,784,880,784,659,784,880,1047,880,784,659,784,659,587,659], // k-pop fast
+    [392,0,440,392,349,392,440,0,349,0,392,349,293,349,392,0],         // epic sparse
+    [440,440,0,494,523,494,0,440,392,440,0,392,349,392,440,392],       // lo-fi lazy
+    [587,659,740,0,740,880,740,659,587,0,659,587,494,587,659,587],     // sakura pentatonic
+  ];
+
+  /* Drum patterns — 16 16th-note grid: k=kicks s=snares h=hihats vol=overall */
+  var DRUMS = [
+    {k:[0,8],      s:[4,12],   h:[0,2,4,6,8,10,12,14], vol:0.35},
+    {k:[0],        s:[8],      h:[0,4,8,12],            vol:0.18},
+    {k:[0,6,8],    s:[4,12],   h:[0,2,4,6,8,10,12,14], vol:0.30},
+    {k:[],         s:[],       h:[],                    vol:0},
+    {k:[0,10],     s:[4,12],   h:[0,4,8,12],            vol:0.42},
+    {k:[0,6,9,12], s:[4,12],   h:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], vol:0.40},
+    {k:[0,4,8,12], s:[4,8,12], h:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], vol:0.55},
+    {k:[0,8],      s:[4,12],   h:[0,4,8,12],            vol:0.50},
+    {k:[0,7,10],   s:[4,13],   h:[0,2,4,6,8,10,12,14], vol:0.25},
+    {k:[0],        s:[8],      h:[0,4,8,12],            vol:0.12},
+  ];
+
+  /* Timbre per track */
+  var TIMBRES = [
+    {mel:'sine',     pad:'sine',     pv:0.10, mv:0.12, rev:0.42},
+    {mel:'sine',     pad:'sine',     pv:0.09, mv:0.10, rev:0.50},
+    {mel:'triangle', pad:'triangle', pv:0.11, mv:0.13, rev:0.35},
+    {mel:'sine',     pad:'sine',     pv:0.08, mv:0.09, rev:0.55},
+    {mel:'sine',     pad:'triangle', pv:0.13, mv:0.11, rev:0.48},
+    {mel:'sawtooth', pad:'triangle', pv:0.08, mv:0.13, rev:0.28},
+    {mel:'sawtooth', pad:'square',   pv:0.06, mv:0.14, rev:0.20},
+    {mel:'triangle', pad:'sine',     pv:0.14, mv:0.10, rev:0.58},
+    {mel:'sine',     pad:'triangle', pv:0.07, mv:0.11, rev:0.45},
+    {mel:'sine',     pad:'sine',     pv:0.09, mv:0.10, rev:0.52},
   ];
 
   /* State */
@@ -4067,6 +4115,7 @@ document.addEventListener('DOMContentLoaded', function(){
   var shuffled = false, repeated = false;
   var cur = 0, loopTimer = null, progTimer = null;
   var volLevel = 0.60;
+  var seekFrac = 0, _loopStart = 0, _loopDur = 1;
 
   /* ── Audio init ── */
   function initCtx(){
@@ -4078,120 +4127,207 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   /* ── Tone generator ── */
-  function note(freq, start, dur, vol, dest){
+  function note(freq, start, dur, vol, dest, type){
+    if(!freq || freq < 10) return;
+    type = type || 'sine';
     var env = ctx.createGain();
     env.gain.setValueAtTime(0, start);
     env.gain.linearRampToValueAtTime(vol, start + 0.018);
     env.gain.setTargetAtTime(vol*0.55, start + 0.04, 0.12);
     env.gain.setTargetAtTime(0.0001, start + dur*0.55, dur*0.26);
     env.connect(dest);
-    /* 3 detuned oscillators for warmth */
-    [[0,'sine',1],  [5,'triangle',0.2], [-4,'triangle',0.18]].forEach(function(cfg){
+    [[0,type,1],[5,'triangle',0.18],[-4,'triangle',0.15]].forEach(function(cfg){
       var o = ctx.createOscillator();
       o.type = cfg[1];
       o.frequency.value = freq * Math.pow(2, cfg[0]/1200);
       var g = ctx.createGain(); g.gain.value = cfg[2];
       o.connect(g); g.connect(env);
-      o.start(start); o.stop(start + dur + 0.6);
+      o.start(start); o.stop(start + dur + 0.5);
     });
+  }
+
+  /* ── Percussion ── */
+  function kick(t, vol){
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(110, t);
+    o.frequency.exponentialRampToValueAtTime(40, t + 0.09);
+    g.gain.setValueAtTime(vol * 1.1, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + 0.32);
+  }
+  function snare(t, vol){
+    var len = Math.floor(ctx.sampleRate * 0.18);
+    var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    var d = buf.getChannelData(0);
+    for(var i=0;i<len;i++) d[i] = Math.random()*2-1;
+    var src = ctx.createBufferSource(); src.buffer = buf;
+    var bpf = ctx.createBiquadFilter(); bpf.type='bandpass'; bpf.frequency.value=1400; bpf.Q.value=0.6;
+    var g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t+0.14);
+    src.connect(bpf); bpf.connect(g); g.connect(master);
+    src.start(t); src.stop(t+0.2);
+  }
+  function hihat(t, vol){
+    var len = Math.floor(ctx.sampleRate * 0.035);
+    var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    var d = buf.getChannelData(0);
+    for(var i=0;i<len;i++) d[i] = Math.random()*2-1;
+    var src = ctx.createBufferSource(); src.buffer = buf;
+    var hpf = ctx.createBiquadFilter(); hpf.type='highpass'; hpf.frequency.value=9000;
+    var g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t+0.025);
+    src.connect(hpf); hpf.connect(g); g.connect(master);
+    src.start(t); src.stop(t+0.04);
   }
 
   /* ── Reverb ── */
-  function makeReverb(){
+  function makeReverb(decaySec){
     try{
       var rev = ctx.createConvolver();
-      var len = ctx.sampleRate * 2.8;
+      var len = ctx.sampleRate * (decaySec||2.5);
       var buf = ctx.createBuffer(2, len, ctx.sampleRate);
       for(var c=0;c<2;c++){
-        var d = buf.getChannelData(c);
-        for(var i=0;i<len;i++) d[i] = (Math.random()*2-1)*Math.pow(1-i/len,1.8);
+        var d=buf.getChannelData(c);
+        for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,1.8);
       }
-      rev.buffer = buf;
-      return rev;
+      rev.buffer=buf; return rev;
     }catch(e){ return null; }
   }
 
-  /* ── Schedule one loop ── */
-  function scheduleLoop(idx){
+  /* ── Schedule one loop with optional seek offset ── */
+  function scheduleLoop(idx, offsetFrac){
+    offsetFrac = offsetFrac || 0;
     var chords = CHORDS[idx], mel = MELS[idx];
+    var drums  = DRUMS[idx],  tim = TIMBRES[idx];
     var bpm = TRACKS[idx].bpm, beat = 60/bpm;
-    var now = ctx.currentTime + 0.08;
-    var rev = makeReverb();
-    var wet = ctx.createGain(); wet.gain.value = 0.42;
-    var dry = ctx.createGain(); dry.gain.value = 0.62;
-    if(rev){ rev.connect(wet); wet.connect(master); } else { wet.connect(master); }
-    dry.connect(master);
-    var dest = rev || master;
+    var step = beat/4;            // 16th note
+    var totalDur = 4*4*beat;      // 4 bars
+    var skipped = offsetFrac * totalDur;
+    var now = ctx.currentTime + 0.06;
 
-    /* 4-bar chord pads */
+    _loopStart = now - skipped;
+    _loopDur   = totalDur;
+
+    var rev = makeReverb(tim.rev * 3.5);
+    var wet = ctx.createGain(); wet.gain.value = tim.rev;
+    var dry = ctx.createGain(); dry.gain.value = 0.65;
+    if(rev){ rev.connect(wet); wet.connect(master); }
+    dry.connect(master);
+    var dest = rev ? rev : master;
+
+    /* Chord pads — 4 bars */
     for(var b=0;b<4;b++){
-      var bs = now + b*4*beat;
+      var bt = b*4*beat;
       var ch = chords[b % chords.length];
-      ch.forEach(function(f, ni){
-        note(f, bs + ni*beat*0.10, beat*2.8, 0.10, dest);
+      ch.forEach(function(f){
+        var nt = bt;
+        if(nt + beat*2.8 <= skipped) return;
+        var st = now + Math.max(0, nt - skipped);
+        note(f, st, beat*2.8, tim.pv, dest, tim.pad);
       });
-      /* Bass */
-      note(ch[0]*0.5, bs, beat*1.8, 0.14, dry);
-      /* Mid stab on beat 3 */
-      note(ch[1], bs + 2*beat, beat*0.8, 0.07, dest);
+      /* Bass note */
+      if(bt + beat*1.8 > skipped)
+        note(ch[0]*0.5, now+Math.max(0,bt-skipped), beat*1.8, tim.pv*1.5, dry, 'sine');
     }
 
-    /* Melody (16 eighth notes) */
+    /* Melody — 16 eighth notes */
     mel.forEach(function(f, ni){
-      note(f, now + ni*beat*0.5, beat*0.42, 0.12, dest);
+      if(!f) return;
+      var nt = ni*beat*0.5;
+      if(nt + beat*0.42 <= skipped) return;
+      note(f, now+Math.max(0,nt-skipped), beat*0.42, tim.mv, dest, tim.mel);
     });
 
-    return 4 * 4 * beat; /* total duration */
+    /* Drums — 16 16th-note slots across 4 bars */
+    if(drums.vol > 0){
+      var dv = drums.vol;
+      for(var s=0;s<16;s++){
+        var st2 = s*step;
+        if(st2 < skipped) continue;
+        var dt = now+(st2-skipped);
+        if(drums.k.indexOf(s)>=0) kick(dt, dv);
+        if(drums.s.indexOf(s)>=0) snare(dt, dv*0.65);
+        if(drums.h.indexOf(s)>=0) hihat(dt, dv*0.38);
+      }
+    }
+
+    return totalDur - skipped;
+  }
+
+  /* ── Seek ── */
+  function seekTo(frac){
+    frac = Math.max(0, Math.min(0.98, frac));
+    var was = playing;
+    if(playing){ clearTimeout(loopTimer); loopTimer=null; stopProg(); master.gain.setTargetAtTime(0,ctx.currentTime,0.05); }
+    seekFrac = frac;
+    if(was){
+      setTimeout(function(){
+        master.gain.setTargetAtTime(muted?0:volLevel, ctx.currentTime, 0.05);
+        playing = true; syncUI(); startProg();
+        (function loop(sf){
+          var rem = scheduleLoop(cur, sf);
+          loopTimer = setTimeout(function(){
+            if(!playing) return;
+            if(!repeated){ cur = shuffled ? (function(){ var n; do{n=Math.floor(Math.random()*TRACKS.length);}while(n===cur&&TRACKS.length>1);return n;})() : (cur+1)%TRACKS.length; updateTrackUI(); }
+            loop(0);
+          }, (rem-0.25)*1000);
+        })(frac);
+        seekFrac = 0;
+      }, 80);
+    } else {
+      if(progFill) progFill.style.width = (frac*100)+'%';
+    }
   }
 
   /* ── Start / Stop ── */
   function startPlay(){
     initCtx();
     ctx.resume().then(function(){
+      master.gain.setTargetAtTime(muted?0:volLevel, ctx.currentTime, 0.1);
       playing = true; syncUI(); startProg();
-      function loop(){
-        var dur = scheduleLoop(cur);
+      var sf = seekFrac; seekFrac = 0;
+      (function loop(sf){
+        var rem = scheduleLoop(cur, sf);
         loopTimer = setTimeout(function(){
           if(!playing) return;
-          if(!repeated){
-            var next = shuffled
-              ? (function(){ var n; do{ n=Math.floor(Math.random()*TRACKS.length); }while(n===cur&&TRACKS.length>1); return n; })()
-              : (cur+1) % TRACKS.length;
-            cur = next; updateTrackUI();
-          }
-          loop();
-        }, (dur - 0.3)*1000);
-      }
-      loop();
+          if(!repeated){ cur = shuffled ? (function(){ var n; do{n=Math.floor(Math.random()*TRACKS.length);}while(n===cur&&TRACKS.length>1);return n;})() : (cur+1)%TRACKS.length; updateTrackUI(); }
+          loop(0);
+        }, (rem-0.25)*1000);
+      })(sf);
     });
   }
 
   function stopPlay(){
     if(loopTimer){ clearTimeout(loopTimer); loopTimer=null; }
     stopProg();
-    if(master){
-      master.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
-      setTimeout(function(){ if(ctx) ctx.suspend(); }, 500);
-    }
+    if(master){ master.gain.setTargetAtTime(0, ctx.currentTime, 0.25); setTimeout(function(){ if(ctx&&!playing) ctx.suspend(); },500); }
     playing = false; syncUI();
   }
 
-  /* ── Progress bar ── */
+  /* ── Progress bar + seek click ── */
   function startProg(){
     stopProg();
-    var bpm = TRACKS[cur].bpm, loopMs = 4*4*(60/bpm)*1000, t0 = Date.now();
     progTimer = setInterval(function(){
-      if(!playing) return;
-      var el = (Date.now()-t0) % loopMs;
-      var pct = el/loopMs*100;
-      if(progFill) progFill.style.width = pct + '%';
+      if(!playing || !ctx) return;
+      var elapsed = ctx.currentTime - _loopStart;
+      var pct = Math.max(0, Math.min(1, elapsed / _loopDur));
+      if(progFill) progFill.style.width = (pct*100)+'%';
       if(curTime){
-        var s = Math.floor(el/1000);
-        curTime.textContent = Math.floor(s/60) + ':' + ('0'+(s%60)).slice(-2);
+        var s = Math.floor(elapsed % _loopDur);
+        curTime.textContent = Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);
       }
-    }, 350);
+    }, 120);
   }
   function stopProg(){ if(progTimer){clearInterval(progTimer);progTimer=null;} }
+
+  /* Click on progress bar to seek */
+  var progTrack2 = player.querySelector('.mp-progress-track');
+  if(progTrack2) progTrack2.addEventListener('click', function(e){
+    var r = progTrack2.getBoundingClientRect();
+    seekTo((e.clientX - r.left) / r.width);
+  });
 
   /* ── UI sync ── */
   function syncUI(){
