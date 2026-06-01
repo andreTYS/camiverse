@@ -4298,10 +4298,10 @@ document.addEventListener('DOMContentLoaded', function(){
     ctx = new AudioCtx();
     master = ctx.createGain();
     master.gain.value = muted ? 0 : volLevel;
-    master.connect(ctx.destination);
     var analyser = ctx.createAnalyser();
     analyser.fftSize = 64;
     master.connect(analyser);
+    analyser.connect(ctx.destination);
     var vizCanvas = document.getElementById('mpViz');
     var vizCtx = vizCanvas ? vizCanvas.getContext('2d') : null;
     var vizData = new Uint8Array(analyser.frequencyBinCount);
