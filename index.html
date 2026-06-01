@@ -624,16 +624,29 @@ footer{border-top:1px solid var(--bd2);padding:64px 0 36px;background:var(--bg1)
   .how-item:not(:last-child)::after{display:none;}
 }
 @media(max-width:768px){
-  .wrap{padding:0 20px;}.hero-left{padding:80px 20px 56px;}
+  .wrap{padding:0 16px;}.hero-left{padding:72px 16px 48px;}
   .ach-grid{grid-template-columns:repeat(2,1fr);}
   .footer-grid{grid-template-columns:1fr;}
-  .chat-panel{right:12px;left:12px;width:auto;bottom:90px;}
-  .chat-btn{bottom:20px;right:20px;}
+  .chat-panel{right:8px;left:8px;width:auto;bottom:136px;max-height:65vh;}
+  .chat-btn{bottom:80px;right:12px;}
+  .cscroll{gap:10px;}
+  .ccard{min-width:130px;max-width:150px;}
+  .hsearch{width:100%;max-width:none;}
+  .ctabs{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
+  .ctab{white-space:nowrap;padding:8px 14px;font-size:.75rem;}
+  .nav-wrap{padding:0 16px;}
 }
 @media(max-width:480px){
-  .hstats{gap:14px;flex-wrap:wrap;}
+  .hstats{gap:12px;flex-wrap:wrap;}
   .reviewers-grid{grid-template-columns:1fr;}
   .how-grid{grid-template-columns:1fr;}
+  .hero-title{font-size:clamp(1.6rem,8vw,2.4rem);}
+  .hero-sub{font-size:.85rem;}
+  .ccard{min-width:118px;max-width:135px;}
+  .chat-panel{right:0;left:0;border-radius:20px 20px 0 0;bottom:0;max-height:80vh;position:fixed;}
+  .chat-btn{bottom:14px;right:10px;}
+  .section-title{font-size:1.1rem;}
+  .nav-links{gap:12px;}
 }
 
 /* ═══════════════════════════════
@@ -2272,9 +2285,18 @@ input:focus-visible {
 
 [data-dark] #music-player { box-shadow: 0 8px 40px rgba(0,0,0,.50), 0 0 20px rgba(224,64,138,.10); }
 @media(max-width:768px){
-  #music-player { bottom:86px; left:12px; width:278px; }
-  #music-player.minimized { width:48px; height:48px; }
+  #music-player { bottom:80px; left:10px; right:10px; width:auto; max-width:340px; }
+  #music-player.minimized { width:48px; height:48px; right:auto; }
   .mp-play-btn { width:38px; height:38px; }
+  .mp-tracklist { left:0; right:0; width:auto; max-height:180px; }
+}
+@media(max-width:480px){
+  #music-player { bottom:72px; left:8px; right:8px; max-width:none; border-radius:16px; }
+  #music-player.minimized { width:44px; height:44px; right:auto; border-radius:50%; }
+  .mp-controls { gap:6px; padding:0 10px 10px; }
+  .mp-play-btn { width:36px; height:36px; }
+  .mp-vol { display:none; }
+  .mp-tracklist { max-height:160px; }
 }
 
 </style>
@@ -4358,83 +4380,98 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   /* ── Schedule a 4-bar loop ── */
-  function scheduleLoop(idx, offsetFrac){
-    offsetFrac = offsetFrac || 0;
-    var bpm   = TRACKS[idx].bpm;
-    var beat  = 60 / bpm;
-    var step  = beat / 4;           // 16th note in seconds
-    var total = 4 * 4 * beat;       // 4 bars
-    var skip  = offsetFrac * total;
-    var now   = Tone.now() + 0.05;
+  function rndTrack(){ var n; do{ n=Math.floor(Math.random()*TRACKS.length); }while(n===cur&&TRACKS.length>1); return n; }
 
-    _loopStart = now - skip;
-    _loopDur   = total;
+  /* ── Active Tone.js Parts (cleared on each track start) ── */
+  var activeParts = [];
+
+  function clearParts(){
+    activeParts.forEach(function(p){ try{ p.stop(); p.dispose(); }catch(e){} });
+    activeParts = [];
+  }
+
+  /* ── Build Parts for current track and start Transport loop ── */
+  function buildAndPlay(idx){
+    clearParts();
+    Tone.Transport.stop();
+    Tone.Transport.cancel();
+
+    var bpm   = TRACKS[idx].bpm;
+    Tone.Transport.bpm.value = bpm;
 
     var chords = CHORDS[idx];
     var mel    = MELS[idx];
     var drums  = DRUMS[idx];
+    var BARS   = 4;
+    var loopEnd = BARS + 'b';   // 4 bars
 
-    /* Chord pads — one chord per bar */
-    for(var b = 0; b < 4; b++){
-      var bt = b * 4 * beat;
-      if(bt + beat * 3.5 <= skip) continue;
-      var t  = now + Math.max(0, bt - skip);
-      var ch = chords[b % chords.length];
-      padSynth.triggerAttackRelease(ch, beat * 3.6, t);
-      /* Bass root, one octave down */
-      var root = ch[0].replace(/(\d)/, function(m,n){ return String(parseInt(n)-1); });
-      bassSynth.triggerAttackRelease(root, beat * 1.6, t);
+    _loopDur = (BARS * 4 * 60) / bpm;  // seconds
+
+    /* Chord pad events */
+    var chordEvents = [];
+    for(var b = 0; b < BARS; b++){
+      chordEvents.push({ time: b + ':0:0', ch: chords[b % chords.length] });
     }
+    var padPart = new Tone.Part(function(time, ev){
+      padSynth.triggerAttackRelease(ev.ch, '3.5b', time);
+      var root = ev.ch[0].replace(/(\d)/, function(m,n){ return String(parseInt(n)-1); });
+      bassSynth.triggerAttackRelease(root, '1.5b', time);
+    }, chordEvents);
+    padPart.loop = true;
+    padPart.loopEnd = loopEnd;
+    padPart.start(0);
+    activeParts.push(padPart);
 
-    /* Melody — 32 eighth notes */
+    /* Melody events (32 eighth notes = 4 bars of 8th notes) */
+    var melEvents = [];
     mel.forEach(function(n, ni){
-      if(!n || n === 'null') return;
-      var nt = ni * beat * 0.5;
-      if(nt + beat * 0.36 <= skip) return;
-      piano.triggerAttackRelease(n, beat * 0.36, now + Math.max(0, nt - skip));
+      if(n && n !== 'null') melEvents.push({ time: '0:' + Math.floor(ni/2) + ':' + ((ni%2)*2), note: n });
     });
-
-    /* Drums */
-    if(drums.vol > 0){
-      var dv = drums.vol;
-      for(var s = 0; s < 32; s++){
-        var st = s * step;
-        if(st <= skip) continue;
-        var dt = now + (st - skip);
-        if(drums.k.indexOf(s) >= 0) drumKit.kick.triggerAttackRelease('C1', '8n', dt);
-        if(drums.s.indexOf(s) >= 0) drumKit.snare.triggerAttackRelease('16n', dt);
-        if(drums.h.indexOf(s) >= 0) drumKit.hihat.triggerAttackRelease('32n', dt);
-      }
+    if(melEvents.length){
+      var melPart = new Tone.Part(function(time, ev){
+        piano.triggerAttackRelease(ev.note, '8n', time);
+      }, melEvents);
+      melPart.loop = true;
+      melPart.loopEnd = loopEnd;
+      melPart.start(0);
+      activeParts.push(melPart);
     }
 
-    return total - skip;
+    /* Drum events */
+    if(drums.vol > 0){
+      var drumEvents = [];
+      for(var s = 0; s < 32; s++){
+        var bar = Math.floor(s / 8), beat16 = s % 8;
+        var t = bar + ':' + Math.floor(beat16/2) + ':' + ((beat16%2)*2);
+        if(drums.k.indexOf(s) >= 0) drumEvents.push({time:t, type:'k'});
+        if(drums.s.indexOf(s) >= 0) drumEvents.push({time:t, type:'s'});
+        if(drums.h.indexOf(s) >= 0) drumEvents.push({time:t, type:'h'});
+      }
+      var drumPart = new Tone.Part(function(time, ev){
+        if(ev.type === 'k') drumKit.kick.triggerAttackRelease('C1', '8n', time);
+        else if(ev.type === 's') drumKit.snare.triggerAttackRelease('16n', time);
+        else drumKit.hihat.triggerAttackRelease('32n', time);
+      }, drumEvents);
+      drumPart.loop = true;
+      drumPart.loopEnd = loopEnd;
+      drumPart.start(0);
+      activeParts.push(drumPart);
+    }
+
+    Tone.Transport.loopEnd = loopEnd;
+    Tone.Transport.loop = true;
+    _loopStart = Tone.now();
+    Tone.Transport.start('+0.05');
   }
 
   /* ── Seek ── */
   function seekTo(frac){
     frac = Math.max(0, Math.min(0.98, frac));
-    var was = playing;
-    if(playing){ Tone.Transport.stop(); clearTimeout(loopTimer); loopTimer=null; stopProg(); }
-    seekFrac = frac;
-    if(was){
-      setTimeout(function(){
-        playing = true; syncUI(); startProg();
-        (function loop(sf){
-          var rem = scheduleLoop(cur, sf);
-          loopTimer = setTimeout(function(){
-            if(!playing) return;
-            if(!repeated) cur = shuffled ? rndTrack() : (cur+1)%TRACKS.length;
-            updateTrackUI(); loop(0);
-          }, (rem - 0.3) * 1000);
-        })(frac);
-        seekFrac = 0;
-      }, 80);
-    } else {
-      if(progFill) progFill.style.width = (frac * 100) + '%';
-    }
+    if(!playing){ if(progFill) progFill.style.width=(frac*100)+'%'; return; }
+    var seekPos = frac * _loopDur;
+    Tone.Transport.seconds = seekPos;
+    _loopStart = Tone.now() - seekPos;
   }
-
-  function rndTrack(){ var n; do{ n=Math.floor(Math.random()*TRACKS.length); }while(n===cur&&TRACKS.length>1); return n; }
 
   /* ── Visualizer ── */
   var _analyser = null, _vizRaf = null, _vizCtx = null, _vizCanvas = null;
@@ -4457,7 +4494,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var bars = Math.min(data.length, 24);
     var bw = w / bars - 1;
     for(var i = 0; i < bars; i++){
-      var v = (data[i] + 140) / 140; // dB to 0-1
+      var v = (data[i] + 140) / 140;
       var bh = Math.max(2, v * h);
       _vizCtx.fillStyle = 'rgba(224,64,138,' + (0.35 + v * 0.65) + ')';
       _vizCtx.fillRect(i * (bw + 1), h - bh, bw, bh);
@@ -4469,23 +4506,15 @@ document.addEventListener('DOMContentLoaded', function(){
   function startPlay(){
     initTone().then(function(){
       Tone.start();
-      playing = true; syncUI(); startProg(); drawViz();
-      var sf = seekFrac; seekFrac = 0;
-      (function loop(sf){
-        var rem = scheduleLoop(cur, sf);
-        loopTimer = setTimeout(function(){
-          if(!playing) return;
-          if(!repeated) cur = shuffled ? rndTrack() : (cur+1)%TRACKS.length;
-          updateTrackUI(); loop(0);
-        }, (rem - 0.3) * 1000);
-      })(sf);
+      playing = true; syncUI(); buildAndPlay(cur); startProg(); drawViz();
     });
   }
 
   function stopPlay(){
-    clearTimeout(loopTimer); loopTimer = null;
-    stopProg(); stopViz();
+    clearParts();
     Tone.Transport.stop();
+    Tone.Transport.cancel();
+    stopProg(); stopViz();
     playing = false; syncUI();
     if(padSynth) padSynth.releaseAll();
   }
@@ -4494,8 +4523,8 @@ document.addEventListener('DOMContentLoaded', function(){
   function startProg(){
     stopProg();
     progTimer = setInterval(function(){
-      if(!playing) return;
-      var elapsed = Tone.now() - _loopStart;
+      if(!playing || !_loopDur) return;
+      var elapsed = Tone.Transport.seconds % _loopDur;
       var pct = Math.max(0, Math.min(1, elapsed / _loopDur));
       if(progFill) progFill.style.width = (pct * 100) + '%';
       if(curTime){
@@ -4541,9 +4570,9 @@ document.addEventListener('DOMContentLoaded', function(){
     Tone.getDestination().volume.value = muted ? -Infinity : Tone.gainToDb(volLevel);
     if(muteBtn){ muteBtn.innerHTML = muted ? VOFF : VON; muteBtn.classList.toggle('active', muted); }
   };
-  window._mpN = function(){ var w=playing; if(playing) stopPlay(); cur=(cur+1)%TRACKS.length; updateTrackUI(); if(w) setTimeout(startPlay,100); };
-  window._mpP = function(){ var w=playing; if(playing) stopPlay(); cur=(cur-1+TRACKS.length)%TRACKS.length; updateTrackUI(); if(w) setTimeout(startPlay,100); };
-  window._mpPT = function(i){ var w=playing; if(playing) stopPlay(); cur=i; updateTrackUI(); if(tklist) tklist.classList.remove('open'); if(w) setTimeout(startPlay,100); };
+  window._mpN = function(){ cur=(cur+1)%TRACKS.length; updateTrackUI(); if(playing) buildAndPlay(cur); };
+  window._mpP = function(){ cur=(cur-1+TRACKS.length)%TRACKS.length; updateTrackUI(); if(playing) buildAndPlay(cur); };
+  window._mpPT = function(i){ cur=i; updateTrackUI(); if(tklist) tklist.classList.remove('open'); if(playing) buildAndPlay(cur); };
   window._mpTL = function(){ if(tklist) tklist.classList.toggle('open'); };
   window._mpMZ = function(){
     minimized = !minimized;
