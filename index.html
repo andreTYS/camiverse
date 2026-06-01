@@ -4293,37 +4293,42 @@ document.addEventListener('DOMContentLoaded', function(){
   var seekFrac = 0, _loopStart = 0, _loopDur = 1;
 
   /* ── Audio init ── */
+  /* ── Visualizer (module-scope so startPlay/stopPlay can call them) ── */
+  var _analyser = null, _vizRaf = null, _vizCtx = null, _vizCanvas = null, _vizData = null;
+
+  function drawViz(){
+    if(!_vizCtx) return;
+    _vizRaf = requestAnimationFrame(drawViz);
+    _analyser.getByteFrequencyData(_vizData);
+    var w = _vizCanvas.width = _vizCanvas.offsetWidth;
+    var h = _vizCanvas.height = _vizCanvas.offsetHeight || 28;
+    _vizCtx.clearRect(0, 0, w, h);
+    var bars = Math.min(_vizData.length, 24);
+    var bw = w / bars - 1;
+    for(var i = 0; i < bars; i++){
+      var v = _vizData[i] / 255;
+      var bh = Math.max(2, v * h);
+      _vizCtx.fillStyle = 'rgba(224,64,138,' + (0.4 + v * 0.6) + ')';
+      _vizCtx.fillRect(i * (bw + 1), h - bh, bw, bh);
+    }
+  }
+  function stopViz(){
+    if(_vizRaf){ cancelAnimationFrame(_vizRaf); _vizRaf = null; }
+    if(_vizCtx && _vizCanvas) _vizCtx.clearRect(0, 0, _vizCanvas.width, _vizCanvas.height);
+  }
+
   function initCtx(){
     if(ctx) return;
     ctx = new AudioCtx();
     master = ctx.createGain();
     master.gain.value = muted ? 0 : volLevel;
-    var analyser = ctx.createAnalyser();
-    analyser.fftSize = 64;
-    master.connect(analyser);
-    analyser.connect(ctx.destination);
-    var vizCanvas = document.getElementById('mpViz');
-    var vizCtx = vizCanvas ? vizCanvas.getContext('2d') : null;
-    var vizData = new Uint8Array(analyser.frequencyBinCount);
-    var vizRaf = null;
-    function drawViz(){
-      if(!vizCtx) return;
-      vizRaf = requestAnimationFrame(drawViz);
-      analyser.getByteFrequencyData(vizData);
-      var w = vizCanvas.width = vizCanvas.offsetWidth;
-      var h = vizCanvas.height = vizCanvas.offsetHeight||28;
-      vizCtx.clearRect(0,0,w,h);
-      var bars = Math.min(vizData.length, 24);
-      var bw = w/bars - 1;
-      for(var i=0;i<bars;i++){
-        var v = vizData[i]/255;
-        var bh = Math.max(2, v*h);
-        var alpha = 0.4 + v*0.6;
-        vizCtx.fillStyle = 'rgba(224,64,138,'+alpha+')';
-        vizCtx.fillRect(i*(bw+1), h-bh, bw, bh);
-      }
-    }
-    function stopViz(){ if(vizRaf){ cancelAnimationFrame(vizRaf); vizRaf=null; } if(vizCtx){ vizCtx.clearRect(0,0,vizCanvas.width,vizCanvas.height); } }
+    _analyser = ctx.createAnalyser();
+    _analyser.fftSize = 64;
+    master.connect(_analyser);
+    _analyser.connect(ctx.destination);
+    _vizCanvas = document.getElementById('mpViz');
+    _vizCtx = _vizCanvas ? _vizCanvas.getContext('2d') : null;
+    _vizData = new Uint8Array(_analyser.frequencyBinCount);
   }
 
   /* ── Tone generator ── */
