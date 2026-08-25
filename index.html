@@ -2300,6 +2300,28 @@ input:focus-visible {
   .mp-tracklist { max-height:160px; }
 }
 
+/* ══ Genre filter pills ══ */
+.genre-filters { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px; }
+.gf-pill { padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:500;border:1.5px solid var(--bd2);background:transparent;color:var(--txt2);cursor:pointer;transition:all .2s; }
+.gf-pill:hover { border-color:var(--neon);color:var(--neon); }
+.gf-pill.on { background:var(--neon);color:#fff;border-color:transparent; }
+
+/* ══ Trailer modal ══ */
+.trailer-modal { position:fixed;inset:0;z-index:9995;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);padding:20px;box-sizing:border-box; }
+.trailer-box { background:#000;border-radius:16px;overflow:hidden;width:100%;max-width:760px;position:relative; }
+.trailer-box iframe { width:100%;aspect-ratio:16/9;border:none;display:block; }
+.trailer-close { position:absolute;top:10px;right:12px;background:rgba(0,0,0,.7);border:none;color:#fff;font-size:1.4rem;cursor:pointer;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;z-index:2; }
+
+/* ══ Enhanced card modal ══ */
+.cami-modal-detail { display:grid;grid-template-columns:120px 1fr;gap:16px;margin-bottom:18px; }
+.cami-modal-poster { width:120px;aspect-ratio:2/3;border-radius:12px;overflow:hidden;flex-shrink:0; }
+.cami-modal-poster img { width:100%;height:100%;object-fit:cover; }
+.cami-modal-info { display:flex;flex-direction:column;gap:6px; }
+.cami-modal-synopsis { font-size:.81rem;color:var(--txt2);line-height:1.6;margin-bottom:14px; }
+.cami-modal-tags { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px; }
+.cami-modal-tag { font-size:.65rem;padding:2px 8px;border-radius:10px;background:var(--bg2);color:var(--txt2);border:1px solid var(--bd); }
+.cami-modal-platform { font-size:.7rem;color:var(--neon);font-weight:600; }
+
 /* ══ EQ Panel ══ */
 .mp-eq { padding:6px 14px 4px; display:none; gap:10px; align-items:flex-end; justify-content:center; }
 .mp-eq.open { display:flex; }
@@ -2595,6 +2617,16 @@ input:focus-visible {
       <button class="ctab" data-g="t" onclick="setTab(this,'t')">Anime</button>
       <button class="ctab" data-g="t" onclick="setTab(this,'t')">K-Pop</button>
       <button class="ctab" data-g="t" onclick="setTab(this,'t')">Movies</button>
+    </div>
+    <div class="genre-filters reveal" id="genreFilters">
+      <button class="gf-pill on" onclick="setGenre(this,'')">Todos</button>
+      <button class="gf-pill" onclick="setGenre(this,'Romance')">Romance</button>
+      <button class="gf-pill" onclick="setGenre(this,'Acción')">Acción</button>
+      <button class="gf-pill" onclick="setGenre(this,'Fantasy')">Fantasy</button>
+      <button class="gf-pill" onclick="setGenre(this,'Drama')">Drama</button>
+      <button class="gf-pill" onclick="setGenre(this,'Thriller')">Thriller</button>
+      <button class="gf-pill" onclick="setGenre(this,'Shonen')">Shonen</button>
+      <button class="gf-pill" onclick="setGenre(this,'K-Pop')">K-Pop</button>
     </div>
     <div class="cscroll reveal"><div class="ccard" data-cat="kdrama">
   <div class="ccard-p" style="border-radius:14px;overflow:hidden;position:relative;aspect-ratio:2/3;margin-bottom:12px;box-shadow:0 4px 20px rgba(180,130,220,0.18);border:1px solid var(--bd);">
@@ -3912,33 +3944,136 @@ document.querySelectorAll('.ccard').forEach(function(card){
 });
 updateFavIcons();
 
+/* ── Real content database ── */
+var CONTENT_DB = {
+  'Lovely Runner':         {year:2024,eps:16,synopsis:'Cuando su ídolo del K-Pop muere, Sol viaja al pasado para salvarlo y se enamora de él antes de que se haga famoso. Un romance de viaje en el tiempo perfecto.',trailer:'Lf9yvwMSyko',genres:['Romance','Fantasy'],platform:'Prime Video'},
+  'Demon Slayer S4':       {year:2024,eps:8, synopsis:'Tanjiro y sus compañeros se entrenan con los Hashira en la sede del Pilar del Fuego para prepararse para el combate final contra Muzan.',trailer:'VQGCKyvzIM4',genres:['Acción','Shonen'],platform:'Crunchyroll'},
+  'Queen of Tears':        {year:2024,eps:16,synopsis:'Un matrimonio al borde del divorcio enfrenta una crisis de vida o muerte que les hace redescubrir su amor. La producción más cara de tvN.',trailer:'Y6MR0lgOiBM',genres:['Romance','Drama'],platform:'Netflix'},
+  'Frieren':               {year:2023,eps:28,synopsis:'Frieren, la elfa maga inmortal, reflexiona sobre el tiempo y la amistad mientras viaja con nuevos compañeros décadas después de derrotar al Rey Demonio.',trailer:'2bEFfXB1RmM',genres:['Fantasy','Drama'],platform:'Crunchyroll'},
+  'BTS Festa 2024':        {year:2024,eps:1, synopsis:'Celebración anual del aniversario de BTS con actuaciones especiales, mensajes de los miembros y contenido exclusivo para los ARMY de todo el mundo.',trailer:'jZa2T2bG7Yw',genres:['K-Pop'],platform:'Weverse'},
+  'Solo Leveling':         {year:2024,eps:12,synopsis:'Sung Jinwoo, el cazador más débil del mundo, gana poderes misteriosos que lo convierten en el guerrero más poderoso. Acción frenética y animación espectacular.',trailer:'5cYv_QBdkws',genres:['Acción','Fantasy'],platform:'Crunchyroll'},
+  'The 8 Show':            {year:2024,eps:8, synopsis:'Ocho desconocidos confinados en un edificio de 8 pisos donde el dinero y el poder lo son todo. Un thriller social perturbador y adictivo.',trailer:'GMnMhAeECdg',genres:['Thriller','Drama'],platform:'Netflix'},
+  '20th Century Girl':     {year:2022,eps:1, synopsis:'En 1999, Bo Ra intenta ayudar a su mejor amiga a acercarse al chico que le gusta, pero termina enamorándose ella misma. Nostalgia pura.',trailer:'F1Qi8YOWTHU',genres:['Romance'],platform:'Netflix'},
+  'My Demon':              {year:2023,eps:16,synopsis:'Un demonio pierde sus poderes al hacerse un tatuaje en una humana. Juntos deben resolver el misterio mientras lidian con sus sentimientos.',trailer:'6UmV4cxHkqY',genres:['Romance','Fantasy'],platform:'Netflix'},
+  'Jujutsu Kaisen S2':     {year:2023,eps:23,synopsis:'La historia de origen de Gojo en su época universitaria y el arco de Shibuya — uno de los eventos más devastadores del anime moderno.',trailer:'PKH46tSaHF4',genres:['Acción','Shonen'],platform:'Crunchyroll'},
+  'Crash Landing on You':  {year:2019,eps:16,synopsis:'Una empresaria surcoreana aterriza accidentalmente en Corea del Norte y se enamora del capitán que la protege. El K-Drama definitivo.',trailer:'GP3j24WRXHo',genres:['Romance','Drama'],platform:'Netflix'},
+  'BLACKPINK Movie':       {year:2021,eps:1, synopsis:'Documental y concierto que celebra el 5º aniversario de BLACKPINK, con actuaciones en vivo, entrevistas y momentos íntimos del grupo.',trailer:'IHNzOHi8sJs',genres:['K-Pop'],platform:'YouTube Premium'},
+  'Goblin':                {year:2016,eps:16,synopsis:'Un guerrero inmortal busca a la novia que pondrá fin a su existencia. Un cuento de hadas moderno con magia, amor y lágrimas a raudales.',trailer:'VekiNs7n0kc',genres:['Romance','Fantasy'],platform:'Netflix'},
+  'Vinland Saga S2':       {year:2023,eps:24,synopsis:'Thorfinn, ahora esclavo, busca redención y paz después de años de violencia. La temporada más madura y emotiva del anime vikingo.',trailer:'i_SX8xSHg_Q',genres:['Drama','Acción'],platform:'Netflix'},
+  'SEVENTEEN Tour':        {year:2023,eps:1, synopsis:'SEVENTEEN: Follow Again al Carat — concierto y documental de la gira mundial del grupo con más de 13 miembros y una energía incomparable.',trailer:'X9fAFIGaYA8',genres:['K-Pop'],platform:'Weverse'},
+  'Past Lives':            {year:2023,eps:1, synopsis:'Una coreana que emigró a Canadá de niña se reencuentra con su primer amor de infancia 24 años después. Hay cosas que el destino nunca termina.',trailer:'kA7-r4OJEK4',genres:['Romance','Drama'],platform:'Apple TV+'},
+  'One Piece Film Red':    {year:2022,eps:1, synopsis:'Shanks el Rojo regresa en esta película donde Luffy y su tripulación buscan a Uta, la cantante de K-Pop del mundo pirata con una voz letal.',trailer:'icZEkQIo0n4',genres:['Acción','Shonen'],platform:'Crunchyroll'},
+  'Itaewon Class':         {year:2020,eps:16,synopsis:'Tras salir de la cárcel, Park Saeroyi construye su bar desde cero para vengarse del grupo que destruyó su familia. Motivación pura.',trailer:'T83QHrXPumI',genres:['Drama','Romance'],platform:'Netflix'},
+  'NewJeans Documentary':  {year:2023,eps:1, synopsis:'Documental íntimo del grupo que revolucionó el K-Pop con su estética Y2K y sonidos únicos. Conoce a Minji, Hanni, Danielle, Haerin y Hyein.',trailer:'GXeGjXMJ14o',genres:['K-Pop'],platform:'YouTube'},
+  'Your Name':             {year:2016,eps:1, synopsis:'Dos jóvenes que viven en distintos lugares se despiertan intercambiando cuerpos. Una película de Makoto Shinkai que parte el corazón.',trailer:'xU47nhruN-Q',genres:['Romance','Fantasy'],platform:'Netflix'},
+};
+
+function openTrailerModal(videoId){
+  var old=document.getElementById('camiTrailerModal');
+  if(old) old.remove();
+  var m=document.createElement('div');
+  m.id='camiTrailerModal';
+  m.className='trailer-modal';
+  m.addEventListener('click',function(e){ if(e.target===m) closeTrailer(); });
+  var box=document.createElement('div');
+  box.className='trailer-box';
+  var cl=document.createElement('button');
+  cl.className='trailer-close';
+  cl.innerHTML='&times;';
+  cl.addEventListener('click',closeTrailer);
+  var iframe=document.createElement('iframe');
+  iframe.src='https://www.youtube.com/embed/'+videoId+'?autoplay=1&rel=0';
+  iframe.allow='autoplay;encrypted-media';
+  iframe.allowFullscreen=true;
+  box.appendChild(cl);
+  box.appendChild(iframe);
+  m.appendChild(box);
+  document.body.appendChild(m);
+  document.addEventListener('keydown',_trailerKey);
+}
+function _trailerKey(e){ if(e.key==='Escape') closeTrailer(); }
+function closeTrailer(){
+  var m=document.getElementById('camiTrailerModal');
+  if(m) m.remove();
+  document.removeEventListener('keydown',_trailerKey);
+}
+
+function setGenre(pill, genre){
+  document.querySelectorAll('#genreFilters .gf-pill').forEach(function(p){ p.classList.remove('on'); });
+  pill.classList.add('on');
+  document.querySelectorAll('.ccard').forEach(function(card){
+    if(!genre){ card.style.display=''; return; }
+    var title=(card.querySelector('.ccard-title')||{}).textContent||'';
+    var db=CONTENT_DB[title];
+    var match=db&&db.genres&&db.genres.some(function(g){ return g===genre; });
+    card.style.display=match?'':'none';
+  });
+}
+window.setGenre=setGenre;
+
 function showCardModal(title, genre, rating, cat, isFav, cardEl){
   var existing = document.getElementById('camiCardModal');
   if(existing) existing.remove();
+  var db = CONTENT_DB[title]||{};
+  var synopsis = db.synopsis||'Una historia emocionante llena de drama, romance y momentos inolvidables. Perfecta para una noche de maratón.';
+  var year = db.year||'';
+  var eps  = db.eps ? (db.eps===1?'Película':db.eps+' eps'):'';
+  var platform = db.platform||'';
+  var trailerId= db.trailer||'';
+  var tags = (db.genres||[genre]).concat(year?[String(year)]:[]);
+
   var modal = document.createElement('div');
   modal.id = 'camiCardModal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);padding:20px;box-sizing:border-box';
   modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+
+  var imgSrc = (cardEl&&cardEl.querySelector('[style*="background-image"]')) ?
+    (cardEl.querySelector('[style*="background-image"]').style.backgroundImage||'').replace(/url\(['"]/,'').replace(/['"]\)/,'') : '';
+
   var box = document.createElement('div');
-  box.style.cssText = 'background:var(--card);border:1.5px solid var(--bd2);border-radius:22px;padding:28px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);position:relative';
+  box.style.cssText = 'background:var(--card);border:1.5px solid var(--bd2);border-radius:22px;padding:24px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.45);position:relative;max-height:90vh;overflow-y:auto';
+
   var closebtn = document.createElement('button');
   closebtn.innerHTML = '&times;';
-  closebtn.style.cssText = 'position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.5rem;color:var(--txt3);cursor:pointer;line-height:1';
+  closebtn.style.cssText = 'position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.6rem;color:var(--txt3);cursor:pointer;line-height:1;z-index:2';
   closebtn.addEventListener('click', function(){ modal.remove(); });
-  var h = document.createElement('div');
-  h.style.cssText = 'font-family:Syne,sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:6px;padding-right:24px';
-  h.textContent = title;
-  var meta = document.createElement('div');
-  meta.style.cssText = 'font-size:.78rem;color:var(--txt3);margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap';
-  meta.innerHTML = '<span style="background:var(--neon);color:#fff;padding:2px 9px;border-radius:20px;font-size:.7rem">'+cat+'</span><span>'+genre+'</span><span style="color:#D97706">★ '+rating.replace('★','').trim()+'</span>';
-  var desc = document.createElement('div');
-  desc.style.cssText = 'font-size:.82rem;color:var(--txt2);line-height:1.6;margin-bottom:18px';
-  desc.textContent = 'Una historia emocionante llena de drama, romance y momentos inolvidables. Perfecta para una noche de maratón.';
+
+  // Header with poster + info
+  var detail = document.createElement('div');
+  detail.className = 'cami-modal-detail';
+  var posterDiv = document.createElement('div');
+  posterDiv.className = 'cami-modal-poster';
+  if(imgSrc){ var pimg=document.createElement('img'); pimg.src=imgSrc; pimg.style.cssText='width:100%;height:100%;object-fit:cover'; posterDiv.appendChild(pimg); }
+  else { posterDiv.style.background='var(--bg2)'; }
+  var infoDiv = document.createElement('div');
+  infoDiv.className = 'cami-modal-info';
+  infoDiv.innerHTML = '<div style="font-family:Syne,sans-serif;font-weight:700;font-size:1.05rem;line-height:1.3;margin-bottom:6px">'+title+'</div>'
+    +'<span style="background:var(--neon);color:#fff;padding:2px 9px;border-radius:20px;font-size:.68rem;align-self:start">'+cat+'</span>'
+    +'<div style="font-size:.75rem;color:var(--txt3);margin-top:4px">'+[eps,year].filter(Boolean).join(' · ')+'</div>'
+    +(platform?'<div class="cami-modal-platform">▶ '+platform+'</div>':'')
+    +'<div style="color:#D97706;font-size:.78rem;font-weight:700;margin-top:2px">★ '+rating.replace(/[★\s]/g,'')+'</div>';
+  detail.appendChild(posterDiv);
+  detail.appendChild(infoDiv);
+
+  var tagsDiv = document.createElement('div');
+  tagsDiv.className = 'cami-modal-tags';
+  tags.forEach(function(t){ var s=document.createElement('span'); s.className='cami-modal-tag'; s.textContent=t; tagsDiv.appendChild(s); });
+
+  var synDiv = document.createElement('div');
+  synDiv.className = 'cami-modal-synopsis';
+  synDiv.textContent = synopsis;
+
   var btnRow = document.createElement('div');
-  btnRow.style.cssText = 'display:flex;gap:8px';
-  var watchBtn = document.createElement('button');
-  watchBtn.textContent = '▶ Ver ahora';
-  watchBtn.style.cssText = 'flex:1;padding:10px;border-radius:12px;border:none;background:var(--neon);color:#fff;font-weight:700;font-size:.83rem;cursor:pointer';
+  btnRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
+
+  if(trailerId){
+    var trBtn = document.createElement('button');
+    trBtn.innerHTML = '&#9654; Ver Trailer';
+    trBtn.style.cssText = 'flex:1;min-width:130px;padding:10px;border-radius:12px;border:none;background:var(--neon);color:#fff;font-weight:700;font-size:.83rem;cursor:pointer;transition:opacity .2s';
+    trBtn.addEventListener('click', function(){ modal.remove(); openTrailerModal(trailerId); });
+    btnRow.appendChild(trBtn);
+  }
+
   var favBtn = document.createElement('button');
   favBtn.textContent = isFav ? '♥ En favoritos' : '♡ Favorito';
   favBtn.style.cssText = 'padding:10px 16px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;color:var(--txt);font-size:.83rem;cursor:pointer';
@@ -3950,12 +4085,22 @@ function showCardModal(title, genre, rating, cat, isFav, cardEl){
     localStorage.setItem('cami-favs', JSON.stringify(favs));
     updateFavIcons();
   });
-  btnRow.appendChild(watchBtn);
   btnRow.appendChild(favBtn);
+
+  var shareBtn = document.createElement('button');
+  shareBtn.textContent = '↗ Compartir';
+  shareBtn.style.cssText = 'padding:10px 14px;border-radius:12px;border:1.5px solid var(--bd2);background:transparent;color:var(--txt);font-size:.83rem;cursor:pointer';
+  shareBtn.addEventListener('click', function(){
+    var txt = '🎬 '+title+' — '+synopsis.slice(0,80)+'… | CamiVerse';
+    if(navigator.share){ navigator.share({title:title,text:txt}); }
+    else { navigator.clipboard.writeText(txt).then(function(){ shareBtn.textContent='✓ Copiado!'; }); }
+  });
+  btnRow.appendChild(shareBtn);
+
   box.appendChild(closebtn);
-  box.appendChild(h);
-  box.appendChild(meta);
-  box.appendChild(desc);
+  box.appendChild(detail);
+  box.appendChild(tagsDiv);
+  box.appendChild(synDiv);
   box.appendChild(btnRow);
   modal.appendChild(box);
   document.body.appendChild(modal);
