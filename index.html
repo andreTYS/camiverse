@@ -2356,6 +2356,76 @@ input:focus-visible {
 /* ══ Swipe indicator ══ */
 @keyframes swipeHint { 0%{opacity:0;transform:translateX(-6px)} 50%{opacity:1} 100%{opacity:0;transform:translateX(6px)} }
 
+/* ══════════ GAMES SECTION ══════════ */
+.games-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:8px; }
+.game-card { background:var(--card);border:1.5px solid var(--bd2);border-radius:24px;padding:28px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:default; }
+.game-card:hover { transform:translateY(-6px);box-shadow:var(--sh3); }
+.game-card::before { content:'';position:absolute;inset:0;opacity:.06;pointer-events:none; }
+.game-card.gc-guess::before { background:radial-gradient(circle at 20% 20%,#E0408A,transparent 70%); }
+.game-card.gc-trivia::before { background:radial-gradient(circle at 80% 20%,#8B5CF6,transparent 70%); }
+.game-card.gc-quiz::before { background:radial-gradient(circle at 50% 80%,#0EA5E9,transparent 70%); }
+.game-emoji { font-size:2.4rem;margin-bottom:12px;display:block; }
+.game-title { font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:6px; }
+.game-desc { font-size:.82rem;color:var(--txt2);line-height:1.55;margin-bottom:20px; }
+.game-start-btn { padding:10px 22px;border-radius:30px;border:none;font-weight:700;font-size:.83rem;cursor:pointer;transition:all .22s; }
+.gc-guess .game-start-btn { background:linear-gradient(135deg,#E0408A,#C0307A);color:#fff; }
+.gc-trivia .game-start-btn { background:linear-gradient(135deg,#8B5CF6,#6D3FD9);color:#fff; }
+.gc-quiz .game-start-btn { background:linear-gradient(135deg,#0EA5E9,#0280C0);color:#fff; }
+.game-start-btn:hover { transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.2); }
+.game-badge { position:absolute;top:18px;right:18px;font-size:.65rem;padding:3px 9px;border-radius:10px;font-weight:700; }
+.game-badge.new { background:var(--neon);color:#fff; }
+.game-badge.hot { background:#F59E0B;color:#fff; }
+
+/* Game modal */
+.gmodal { position:fixed;inset:0;z-index:9980;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);padding:20px;box-sizing:border-box; }
+.gbox { background:var(--card);border:1.5px solid var(--bd2);border-radius:26px;padding:32px;max-width:520px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.4);position:relative;max-height:90vh;overflow-y:auto; }
+.gbox h2 { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:6px; }
+.gbox .gsub { font-size:.8rem;color:var(--txt3);margin-bottom:20px; }
+.gclose { position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.5rem;color:var(--txt3);cursor:pointer; }
+
+/* Guess game */
+.guess-clue { background:var(--bg2);border-radius:14px;padding:16px;margin-bottom:12px;font-size:.85rem;line-height:1.6;color:var(--txt); }
+.guess-clue .clue-num { font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--neon);font-weight:700;margin-bottom:4px; }
+.guess-input-row { display:flex;gap:8px;margin:16px 0 8px; }
+.guess-input { flex:1;padding:10px 14px;border-radius:12px;border:1.5px solid var(--bd2);background:var(--bg1);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none; }
+.guess-input:focus { border-color:var(--neon); }
+.guess-submit { padding:10px 18px;border-radius:12px;border:none;background:var(--neon);color:#fff;font-weight:700;cursor:pointer; }
+.guess-lives { display:flex;gap:4px;margin-bottom:16px; }
+.guess-result { text-align:center;padding:20px;border-radius:16px;margin-top:12px; }
+.guess-result.win { background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10B981; }
+.guess-result.lose { background:rgba(224,64,138,.10);border:1px solid rgba(224,64,138,.3);color:var(--neon); }
+
+/* Trivia game */
+.trivia-q { font-size:.95rem;font-weight:600;line-height:1.5;margin-bottom:18px;color:var(--txt); }
+.trivia-opts { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px; }
+.trivia-opt { padding:12px 14px;border-radius:14px;border:1.5px solid var(--bd2);background:var(--bg1);color:var(--txt);font-size:.82rem;cursor:pointer;text-align:left;transition:all .2s;line-height:1.35; }
+.trivia-opt:hover:not(:disabled) { border-color:var(--neon-lav);background:rgba(139,92,246,.08); }
+.trivia-opt.correct { border-color:#10B981;background:rgba(16,185,129,.12);color:#10B981;font-weight:700; }
+.trivia-opt.wrong { border-color:#EF4444;background:rgba(239,68,68,.10);color:#EF4444; }
+.trivia-opt:disabled { cursor:default; }
+.trivia-bar-wrap { background:var(--bg2);border-radius:8px;height:6px;margin-bottom:18px;overflow:hidden; }
+.trivia-bar { height:6px;border-radius:8px;background:var(--neon-lav);transition:width 1s linear; }
+.trivia-score-row { display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--txt3);margin-bottom:8px; }
+
+/* Personality quiz */
+.pquiz-q { font-size:.95rem;font-weight:600;line-height:1.5;margin-bottom:18px; }
+.pquiz-opts { display:flex;flex-direction:column;gap:9px; }
+.pquiz-opt { padding:12px 16px;border-radius:14px;border:1.5px solid var(--bd2);background:var(--bg1);color:var(--txt);font-size:.83rem;cursor:pointer;text-align:left;transition:all .2s;line-height:1.4; }
+.pquiz-opt:hover { border-color:var(--neon-sky);background:rgba(14,165,233,.07); }
+.pquiz-opt.chosen { border-color:var(--neon-sky);background:rgba(14,165,233,.12);font-weight:600; }
+.pquiz-progress { display:flex;gap:4px;margin-bottom:20px; }
+.pquiz-dot { flex:1;height:4px;border-radius:4px;background:var(--bd2);transition:background .3s; }
+.pquiz-dot.done { background:var(--neon-sky); }
+.pquiz-result { text-align:center;padding:24px 16px; }
+.pquiz-result-char { font-size:3rem;margin-bottom:8px; }
+.pquiz-result-name { font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--neon-sky);margin-bottom:8px; }
+.pquiz-result-series { font-size:.78rem;color:var(--txt3);margin-bottom:12px; }
+.pquiz-result-desc { font-size:.84rem;color:var(--txt2);line-height:1.6; }
+@media(max-width:600px){
+  .trivia-opts { grid-template-columns:1fr; }
+  .games-grid { grid-template-columns:1fr; }
+}
+
 /* ══ Notification toast ══ */
 .cami-toast { position:fixed;bottom:140px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,10,40,.92);backdrop-filter:blur(12px);border:1px solid var(--bd2);color:#fff;font-size:.78rem;padding:8px 16px;border-radius:30px;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap; }
 .cami-toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
@@ -2395,6 +2465,7 @@ input:focus-visible {
     <li><a href="#">K-Pop</a></li>
     <li><a href="#">Community</a></li>
     <li><a href="#">Rankings</a></li>
+    <li><a href="#games" style="color:var(--neon);font-weight:600;">🎮 Games</a></li>
   </ul>
   <div class="nav-end">
     <button class="dm-btn" onclick="toggleDark()" title="Toggle dark mode">
@@ -3651,6 +3722,47 @@ input:focus-visible {
     </div>
   </div>
 </section>
+<section class="sec" id="games">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <div class="sec-tag">🎮 Mini Games</div>
+        <h2 class="sec-title">Play &amp; Discover</h2>
+        <p class="sec-sub">Pon a prueba tu conocimiento del anime, K-Drama y K-Pop.</p>
+      </div>
+    </div>
+    <div class="games-grid reveal">
+
+      <!-- Game 1: Guess the Title -->
+      <div class="game-card gc-guess">
+        <span class="game-badge hot">HOT</span>
+        <span class="game-emoji">🔍</span>
+        <div class="game-title">Adivina el Título</div>
+        <p class="game-desc">Recibirás pistas sobre un anime o K-Drama. ¿Puedes adivinarlo con el menor número de pistas posibles?</p>
+        <button class="game-start-btn" onclick="startGuessGame()">Jugar ahora</button>
+      </div>
+
+      <!-- Game 2: K-Pop Trivia -->
+      <div class="game-card gc-trivia">
+        <span class="game-badge new">NEW</span>
+        <span class="game-emoji">🎤</span>
+        <div class="game-title">K-Pop &amp; Anime Trivia</div>
+        <p class="game-desc">10 preguntas, 20 segundos cada una. ¿Eres un auténtico fan del entretenimiento asiático?</p>
+        <button class="game-start-btn" onclick="startTrivia()">Jugar ahora</button>
+      </div>
+
+      <!-- Game 3: Personality Quiz -->
+      <div class="game-card gc-quiz">
+        <span class="game-emoji">✨</span>
+        <div class="game-title">¿Qué personaje eres?</div>
+        <p class="game-desc">Responde 6 preguntas y descubre qué personaje icónico de anime o K-Drama representa tu personalidad.</p>
+        <button class="game-start-btn" onclick="startPersonalityQuiz()">Descúbrelo</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="footer-grid">
@@ -4742,6 +4854,287 @@ document.addEventListener('DOMContentLoaded', function(){
   updateTrackUI();
   loadTrack(0, false, false); // preload silently
 });
+</script>
+
+<script>
+/* ══════════════════════════════════════════
+   🎮  MINI GAMES
+══════════════════════════════════════════ */
+
+/* ── helpers ── */
+function openGModal(id, html){
+  var old=document.getElementById(id); if(old) old.remove();
+  var m=document.createElement('div'); m.className='gmodal'; m.id=id;
+  m.addEventListener('click',function(e){ if(e.target===m) m.remove(); });
+  var box=document.createElement('div'); box.className='gbox';
+  box.innerHTML='<button class="gclose" onclick="document.getElementById(\''+id+'\').remove()">&times;</button>'+html;
+  m.appendChild(box); document.body.appendChild(m); return {m,box};
+}
+
+/* ══════════════════════════════════════════
+   GAME 1 — Adivina el Título
+══════════════════════════════════════════ */
+var GUESS_TITLES = [
+  { answer:'Crash Landing on You',
+    clues:['Esta historia cruza dos países que técnicamente están en guerra.',
+           'La protagonista aterriza en el lugar equivocado durante un vuelo en parapente.',
+           'El amor nace entre un capitán militar y una empresaria millonaria.',
+           'Hyun Bin y Son Ye-jin protagonizan esta historia. Se casaron en la vida real.'] },
+  { answer:'Attack on Titan',
+    clues:['La humanidad vive encerrada dentro de enormes murallas.',
+           'Criaturas gigantes devoran humanos sin razón aparente.',
+           'Eren Yeager pierde a su madre en el primer episodio.',
+           'Hajime Isayama es el autor del manga original. Finalizó en 2021.'] },
+  { answer:'Spirited Away',
+    clues:['Una niña queda atrapada en un mundo de espíritus y dioses.',
+           'Para salvar a sus padres, convertidos en cerdos, debe trabajar en un baño.',
+           'Dirigida por el maestro Hayao Miyazaki de Studio Ghibli.',
+           'Ganó el Oscar a Mejor Película Animada en 2003. La primera anime en lograrlo.'] },
+  { answer:'Goblin',
+    clues:['Un guerrero inmortal lleva siglos buscando a la persona que lo libere de su maldición.',
+           'La novia de la profecía puede ver una espada que nadie más puede ver.',
+           'El Grim Reaper y el Goblin comparten apartamento sin recordar que se conocieron antes.',
+           'Kim Eun-sook escribió el guión. Lee Dong-wook interpreta al Ángel de la Muerte.'] },
+  { answer:'Your Lie in April',
+    clues:['Un pianista prodigio dejó de escuchar su propia música tras la muerte de su madre.',
+           'Una violinista de cabello rojizo llega para cambiar su vida de colores apagados.',
+           'El título hace referencia a una mentira crucial que cambia la vida del protagonista.',
+           'Kousei Arima y Kaori Miyazono. Una historia de música, amor y despedida.'] },
+  { answer:'BTS',
+    clues:['Son 7 integrantes de distintas ciudades de Corea del Sur.',
+           '"Dynamite", su primer sencillo completamente en inglés, llegó al #1 en Billboard.',
+           'Sus fans mundiales se llaman ARMY. Cada concierto vende en minutos.',
+           'J-Hope, RM, Jin, Suga, Jimin, V y Jungkook. Debutaron en 2013 con Big Hit.'] },
+];
+
+var _guessState = {};
+
+function startGuessGame(){
+  var t = GUESS_TITLES[Math.floor(Math.random()*GUESS_TITLES.length)];
+  _guessState = {title:t, shown:1, lives:3, done:false};
+  renderGuessModal();
+}
+
+function renderGuessModal(){
+  var s=_guessState, t=s.title;
+  var livesHtml = [1,2,3].map(function(i){ return '<span style="font-size:1.1rem">'+(i<=s.lives?'❤️':'🖤')+'</span>'; }).join('');
+  var cluesHtml = '';
+  for(var i=0;i<s.shown;i++){
+    cluesHtml+='<div class="guess-clue"><div class="clue-num">Pista '+(i+1)+'</div>'+t.clues[i]+'</div>';
+  }
+  var bottomHtml = s.done ? '' :
+    '<div class="guess-input-row"><input class="guess-input" id="guessInput" placeholder="Escribe el título..." onkeydown="if(event.key===\'Enter\')submitGuess()"/><button class="guess-submit" onclick="submitGuess()">Adivinar</button></div>'
+    +(s.shown<t.clues.length&&s.lives>0?'<button onclick="showNextClue()" style="font-size:.78rem;background:none;border:none;color:var(--txt3);cursor:pointer;padding:0">+ Ver siguiente pista (-1 vida)</button>':'');
+
+  var html='<h2>🔍 Adivina el Título</h2><p class="gsub">'+s.shown+' de '+t.clues.length+' pistas usadas</p>'
+    +'<div class="guess-lives">'+livesHtml+'</div>'
+    +cluesHtml+bottomHtml;
+
+  var {m,box}=openGModal('guessModal',html);
+  if(!s.done){ setTimeout(function(){ var inp=document.getElementById('guessInput'); if(inp) inp.focus(); },100); }
+}
+
+function showNextClue(){
+  if(_guessState.shown<_guessState.title.clues.length && _guessState.lives>1){
+    _guessState.shown++; _guessState.lives--;
+    renderGuessModal();
+  }
+}
+
+function submitGuess(){
+  var inp=document.getElementById('guessInput');
+  if(!inp) return;
+  var ans=inp.value.trim().toLowerCase();
+  var correct=_guessState.title.answer.toLowerCase();
+  if(ans===''){ inp.style.borderColor='var(--neon)'; return; }
+  var box=document.querySelector('#guessModal .gbox');
+  if(!box) return;
+  var resultDiv=document.createElement('div');
+  if(ans===correct || correct.includes(ans) || ans.includes(correct.split(' ')[0].toLowerCase())){
+    _guessState.done=true;
+    resultDiv.className='guess-result win';
+    resultDiv.innerHTML='<div style="font-size:2rem">🎉</div><div style="font-weight:700;font-size:1.1rem;margin:8px 0">¡Correcto!</div><div style="font-size:.85rem;color:inherit">Era: <strong>'+_guessState.title.answer+'</strong></div>'
+      +'<button onclick="startGuessGame()" style="margin-top:14px;padding:9px 20px;border-radius:30px;border:none;background:var(--neon);color:#fff;font-weight:700;cursor:pointer">Jugar de nuevo</button>';
+  } else {
+    _guessState.lives--;
+    if(_guessState.lives<=0){
+      _guessState.done=true;
+      resultDiv.className='guess-result lose';
+      resultDiv.innerHTML='<div style="font-size:2rem">😔</div><div style="font-weight:700;font-size:1.1rem;margin:8px 0">Era: '+_guessState.title.answer+'</div>'
+        +'<button onclick="startGuessGame()" style="margin-top:14px;padding:9px 20px;border-radius:30px;border:none;background:var(--neon);color:#fff;font-weight:700;cursor:pointer">Intentar de nuevo</button>';
+    } else {
+      inp.value=''; inp.style.borderColor='#EF4444'; inp.placeholder='Incorrecto — intenta de nuevo ('+_guessState.lives+' vidas)';
+      return;
+    }
+  }
+  if(_guessState.done){
+    var oldRow=box.querySelector('.guess-input-row'); if(oldRow) oldRow.remove();
+    var oldMore=box.querySelector('button[onclick^="showNext"]'); if(oldMore) oldMore.remove();
+    box.appendChild(resultDiv);
+  }
+}
+
+/* ══════════════════════════════════════════
+   GAME 2 — K-Pop & Anime Trivia
+══════════════════════════════════════════ */
+var TRIVIA_Q = [
+  {q:'¿En qué año debutó BTS?',opts:['2011','2012','2013','2014'],a:2},
+  {q:'¿Cómo se llama el grupo de Jisoo, Jennie, Rosé y Lisa?',opts:['TWICE','BLACKPINK','aespa','NewJeans'],a:1},
+  {q:'¿Qué estudio produjo "Spirited Away" y "My Neighbor Totoro"?',opts:['Toei Animation','MAPPA','Studio Ghibli','Kyoto Animation'],a:2},
+  {q:'¿Cuántos episodios tiene la primera temporada de "Demon Slayer"?',opts:['12','24','26','13'],a:1},
+  {q:'¿Cómo se llama el protagonista de "Solo Leveling"?',opts:['Kim Dokja','Sung Jinwoo','Yoo Joonghyuk','Cha Hyunsung'],a:1},
+  {q:'¿En qué país se ambienta "Crash Landing on You"?',opts:['Japón','China','Corea del Sur y del Norte','Taiwán'],a:2},
+  {q:'"Your Lie in April" se llama en japonés:',opts:['Shigatsu wa Kimi no Uso','Kimi ni Todoke','Ao Haru Ride','Anohana'],a:0},
+  {q:'¿Quién compuso la BSO de "Spirited Away"?',opts:['Yoko Shimomura','Yuki Kajiura','Joe Hisaishi','Hiroyuki Sawano'],a:2},
+  {q:'¿Cuántos miembros tiene SEVENTEEN?',opts:['9','12','13','7'],a:2},
+  {q:'¿Qué país originó el término "K-Drama"?',opts:['China','Japón','Corea del Sur','Tailandia'],a:2},
+];
+
+var _trivState={};
+var _trivTimer=null;
+
+function startTrivia(){
+  _trivState={qs:TRIVIA_Q.slice().sort(function(){return Math.random()-.5;}),cur:0,score:0,answered:false};
+  renderTriviaModal();
+}
+
+function renderTriviaModal(){
+  var s=_trivState;
+  if(s.cur>=s.qs.length){ showTriviaResult(); return; }
+  var q=s.qs[s.cur];
+  var optsHtml=q.opts.map(function(o,i){ return '<button class="trivia-opt" id="topt'+i+'" onclick="answerTrivia('+i+')">'+o+'</button>'; }).join('');
+  var html='<h2>🎤 K-Pop & Anime Trivia</h2>'
+    +'<div class="trivia-score-row"><span>Pregunta '+(s.cur+1)+' / '+s.qs.length+'</span><span>Puntos: <strong>'+s.score+'</strong></span></div>'
+    +'<div class="trivia-bar-wrap"><div class="trivia-bar" id="trivBar" style="width:100%"></div></div>'
+    +'<div class="trivia-q">'+q.q+'</div>'
+    +'<div class="trivia-opts">'+optsHtml+'</div>'
+    +'<div id="trivFeedback" style="font-size:.82rem;min-height:24px;color:var(--txt3)"></div>';
+  openGModal('triviaModal',html);
+  clearInterval(_trivTimer);
+  var secs=20; var bar=document.getElementById('trivBar');
+  _trivTimer=setInterval(function(){
+    secs--; if(bar) bar.style.width=(secs/20*100)+'%';
+    if(secs<=0){ clearInterval(_trivTimer); if(!_trivState.answered) timeoutTrivia(); }
+  },1000);
+}
+
+function answerTrivia(idx){
+  if(_trivState.answered) return;
+  _trivState.answered=true;
+  clearInterval(_trivTimer);
+  var q=_trivState.qs[_trivState.cur];
+  var correct=q.a===idx;
+  if(correct) _trivState.score++;
+  document.querySelectorAll('.trivia-opt').forEach(function(b,i){
+    b.disabled=true;
+    if(i===q.a) b.classList.add('correct');
+    else if(i===idx) b.classList.add('wrong');
+  });
+  var fb=document.getElementById('trivFeedback');
+  if(fb) fb.textContent=correct?'✅ ¡Correcto!':'❌ La respuesta era: '+q.opts[q.a];
+  setTimeout(function(){ _trivState.cur++; _trivState.answered=false; renderTriviaModal(); },1600);
+}
+
+function timeoutTrivia(){
+  _trivState.answered=true;
+  document.querySelectorAll('.trivia-opt').forEach(function(b,i){ b.disabled=true; if(i===_trivState.qs[_trivState.cur].a) b.classList.add('correct'); });
+  var fb=document.getElementById('trivFeedback'); if(fb) fb.textContent='⏰ ¡Tiempo! La respuesta era: '+_trivState.qs[_trivState.cur].opts[_trivState.qs[_trivState.cur].a];
+  setTimeout(function(){ _trivState.cur++; _trivState.answered=false; renderTriviaModal(); },1600);
+}
+
+function showTriviaResult(){
+  var s=_trivState, pct=Math.round(s.score/s.qs.length*100);
+  var medal = pct>=90?'🏆':pct>=70?'🥈':pct>=50?'🥉':'😅';
+  var msg = pct>=90?'¡Eres un experto total!':pct>=70?'¡Gran conocimiento!':pct>=50?'Bien, pero puedes mejorar.':'Sigue viendo más anime 😄';
+  var html='<h2>🎤 Resultado Final</h2>'
+    +'<div style="text-align:center;padding:20px 0">'
+    +'<div style="font-size:3.5rem">'+medal+'</div>'
+    +'<div style="font-size:2.5rem;font-weight:800;font-family:Syne,sans-serif;margin:10px 0">'+s.score+' / '+s.qs.length+'</div>'
+    +'<div style="font-size:1rem;color:var(--txt2);margin-bottom:20px">'+msg+'</div>'
+    +'<button onclick="startTrivia()" style="padding:11px 26px;border-radius:30px;border:none;background:linear-gradient(135deg,#8B5CF6,#6D3FD9);color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;margin-right:8px">Jugar de nuevo</button>'
+    +'</div>';
+  openGModal('triviaModal',html);
+}
+
+/* ══════════════════════════════════════════
+   GAME 3 — ¿Qué personaje eres?
+══════════════════════════════════════════ */
+var PQ_QUESTIONS = [
+  {q:'¿Cómo reaccionas cuando alguien te hace daño?',opts:['Guardo silencio y me alejo','Me enfrento a ellos directamente','Finjo que no me afecta','Lloro en secreto y luego sigo adelante']},
+  {q:'¿Cuál es tu mayor fortaleza?',opts:['Lealtad inquebrantable','Fuerza y determinación','Inteligencia estratégica','Empatía y sensibilidad']},
+  {q:'¿Cuál es tu lugar favorito?',opts:['Un café tranquilo con lluvia','En medio de la acción','Biblioteca o estudio','Mirando el atardecer con alguien especial']},
+  {q:'¿Qué harías en una crisis?',opts:['Proteger a quienes amo antes que a mí','Liderar y tomar decisiones rápidas','Analizar la situación con calma','Buscar apoyo emocional']},
+  {q:'¿Qué tipo de historia te atrae más?',opts:['Amor imposible con final triste','Aventura épica con batallas','Misterio y revelaciones inesperadas','Romance lento y significativo']},
+  {q:'¿Cuál es tu frase interior?',opts:['"El tiempo lo cura todo"','"No me detendré hasta lograrlo"','"Hay un plan detrás de todo"','"Mientras esté contigo, basta"']},
+];
+
+var PQ_RESULTS = [
+  {char:'Tanjiro Kamado',series:'Demon Slayer',emoji:'🗡️',color:'#10B981',
+   desc:'Eres compasivo, tenaz y protector. Nunca renuncias a tus seres queridos, incluso ante los desafíos más oscuros. Tu corazón es tu mayor arma.'},
+  {char:'Kim Shin (El Goblin)',series:'Goblin (도깨비)',emoji:'🌿',color:'#8B5CF6',
+   desc:'Cargas con un pasado doloroso pero sigues siendo noble y protector. Buscas redención y conexión. Tu amor, cuando llega, es eterno.'},
+  {char:'Sung Jinwoo',series:'Solo Leveling',emoji:'⚔️',color:'#6D3FD9',
+   desc:'Callado, analítico y más fuerte de lo que aparenta. Evolucionas constantemente. Nadie ve tu potencial hasta que ya es demasiado tarde para ellos.'},
+  {char:'Kaori Miyazono',series:'Your Lie in April',emoji:'🎻',color:'#E0408A',
+   desc:'Vives intensamente, con una luz que ilumina a todos a tu alrededor. Eres libre, emocional y dejas una huella imborrable en quien te conoce.'},
+];
+
+var _pqState={};
+
+function startPersonalityQuiz(){
+  _pqState={cur:0,scores:[0,0,0,0]};
+  renderPQuizModal();
+}
+
+function renderPQuizModal(){
+  var s=_pqState;
+  if(s.cur>=PQ_QUESTIONS.length){ showPQuizResult(); return; }
+  var q=PQ_QUESTIONS[s.cur];
+  var dotsHtml=PQ_QUESTIONS.map(function(_,i){ return '<div class="pquiz-dot'+(i<s.cur?' done':'')+'"></div>'; }).join('');
+  var optsHtml=q.opts.map(function(o,i){ return '<button class="pquiz-opt" onclick="answerPQ('+i+')">'+o+'</button>'; }).join('');
+  var html='<h2>✨ ¿Qué personaje eres?</h2><p class="gsub">Pregunta '+(s.cur+1)+' de '+PQ_QUESTIONS.length+'</p>'
+    +'<div class="pquiz-progress">'+dotsHtml+'</div>'
+    +'<div class="pquiz-q">'+q.q+'</div>'
+    +'<div class="pquiz-opts">'+optsHtml+'</div>';
+  openGModal('pquizModal',html);
+}
+
+function answerPQ(idx){
+  _pqState.scores[idx]++;
+  _pqState.cur++;
+  renderPQuizModal();
+}
+
+function showPQuizResult(){
+  var s=_pqState;
+  var maxIdx=s.scores.indexOf(Math.max.apply(null,s.scores));
+  var r=PQ_RESULTS[maxIdx];
+  var html='<h2>✨ Tu Personaje</h2>'
+    +'<div class="pquiz-result">'
+    +'<div class="pquiz-result-char">'+r.emoji+'</div>'
+    +'<div class="pquiz-result-name">'+r.char+'</div>'
+    +'<div class="pquiz-result-series">'+r.series+'</div>'
+    +'<div class="pquiz-result-desc">'+r.desc+'</div>'
+    +'<div style="display:flex;gap:10px;justify-content:center;margin-top:20px">'
+    +'<button onclick="startPersonalityQuiz()" style="padding:10px 22px;border-radius:30px;border:none;background:linear-gradient(135deg,#0EA5E9,#0280C0);color:#fff;font-weight:700;cursor:pointer">Repetir quiz</button>'
+    +'<button onclick="shareQuizResult(\''+r.char+'\',\''+r.series+'\')" style="padding:10px 22px;border-radius:30px;border:1.5px solid var(--bd2);background:transparent;color:var(--txt);cursor:pointer;font-size:.83rem">Compartir</button>'
+    +'</div></div>';
+  openGModal('pquizModal',html);
+}
+
+function shareQuizResult(char,series){
+  var txt='✨ Soy '+char+' de '+series+' según CamiVerse. ¿Y tú?';
+  if(navigator.share){ navigator.share({text:txt}); }
+  else { navigator.clipboard.writeText(txt).then(function(){ alert('¡Copiado al portapapeles!'); }); }
+}
+
+window.startGuessGame=startGuessGame;
+window.startTrivia=startTrivia;
+window.startPersonalityQuiz=startPersonalityQuiz;
+window.submitGuess=submitGuess;
+window.showNextClue=showNextClue;
+window.answerTrivia=answerTrivia;
+window.answerPQ=answerPQ;
 </script>
 </body>
 </html>
